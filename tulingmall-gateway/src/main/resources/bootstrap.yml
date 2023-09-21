@@ -2,6 +2,43 @@ spring:
   application:
     name: tulingmall-gateway
   cloud:
+    gateway:
+      predicate:
+        weight:
+          enabled: false
+    sentinel:
+      transport:
+        dashboard: localhost:8000
+        eager: true
+      datasource:
+        gateway-flow-rules:
+          nacos:
+            server-addr: 127.0.0.1:8848
+            dataId: ${spring.application.name}-gateway-flow-rules
+            groupId: SENTINEL_GROUP
+            data-type: json
+            rule-type: gw-flow
+        gateway-api-rules:
+          nacos:
+            server-addr: 127.0.0.1:8848
+            dataId: ${spring.application.name}-gateway-api-rules
+            groupId: SENTINEL_GROUP
+            data-type: json
+            rule-type: gw-api-group
+        degrade-rules:
+          nacos:
+            server-addr: 127.0.0.1:8848
+            dataId: ${spring.application.name}-degrade-rules
+            groupId: SENTINEL_GROUP
+            data-type: json
+            rule-type: degrade
+        system-rules:
+          nacos:
+            server-addr: 127.0.0.1:8848
+            dataId: ${spring.application.name}-system-rules
+            groupId: SENTINEL_GROUP
+            data-type: json
+            rule-type: system
     nacos:
       config:
         server-addr: 127.0.0.1:8848 #配置中心的地址
@@ -10,10 +47,12 @@ spring:
           data-id: tulingmall-nacos.yml
           group: DEFAULT_GROUP
           refresh: true
-        shared-configs[1]:
-          data-id: tulingmall-db-common.yml
-          group: DEFAULT_GROUP
-          refresh: true
+      username: nacos
+      password: nacos
+  #        shared-configs[1]:
+#          data-id: tulingmall-db-common.yml
+#          group: DEFAULT_GROUP
+#          refresh: true
   profiles:
     active: dev
 

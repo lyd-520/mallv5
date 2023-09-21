@@ -39,11 +39,11 @@ public class JwtUtils {
      */
     private static final String CLIENT_SECRET = "tlmall";
 
+
     /**
      * 认证服务器暴露的获取token_key的地址
      */
     private static final String AUTH_TOKEN_KEY_URL = "http://tulingmall-authcenter/oauth/token_key";
-
     /**
      * 请求头中的 token的开始
      */
@@ -121,7 +121,7 @@ public class JwtUtils {
         }
     }
 
-    public static Claims validateJwtToken(String authHeader,PublicKey publicKey) {
+    public static Claims  validateJwtToken(String authHeader,PublicKey publicKey) {
         String token =null ;
         try{
             token = StringUtils.substringAfter(authHeader, AUTH_HEADER);

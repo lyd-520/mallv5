@@ -1,8 +1,11 @@
 package com.tuling.tulingmall.config;
 
 import com.tuling.tulingmall.Component.TulingRestTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
+//import org.springframework.cloud.loadbalancer.blocking.client.BlockingLoadBalancerClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -38,11 +41,14 @@ public class RibbonConfig {
      * @return
      *
      */
+@Autowired(required = false)
+LoadBalancerClient loadBalancerClient;
+
     @Bean
-    public RestTemplate restTemplate(LoadBalancerInterceptor loadBalancerInterceptor){
+    public RestTemplate restTemplate(){
         RestTemplate restTemplate = new RestTemplate();
         List<ClientHttpRequestInterceptor> list = new ArrayList();
-        list.add(loadBalancerInterceptor);
+        list.add(new LoadBalancerInterceptor(loadBalancerClient));
         restTemplate.setInterceptors(list);
         return restTemplate;
     }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
+
 /**
  * @desc: 类的描述:Feign远程调用商品服务接口
  */

@@ -5,12 +5,14 @@ import com.tuling.tulingmall.ordercurr.dto.OmsOrderDeliveryParam;
 import com.tuling.tulingmall.ordercurr.dto.OmsOrderQueryParam;
 import com.tuling.tulingmall.ordercurr.model.OmsOrder;
 import com.tuling.tulingmall.ordercurr.model.OmsOrderExample;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import com.tuling.tulingmall.ordercurr.model.OmsOrderItem;
+import com.tuling.tulingmall.ordercurr.model.OmsOrderOperateHistory;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
 
 import java.util.List;
 public interface OmsOrderMapper{
+    //TODO 订单ABA问题（重试请求导致）-版本号/重试
     long countByExample(OmsOrderExample example);
 
     int deleteByExample(OmsOrderExample example);
@@ -107,32 +109,31 @@ public interface OmsOrderMapper{
     /**
      * 获取订单详情
      */
-    @Select("<script>" +
-            "SELECT o.*," +
-            "            oi.id item_id," +
-            "            oi.product_id item_product_id," +
-            "            oi.product_sn item_product_sn," +
-            "            oi.product_pic item_product_pic," +
-            "            oi.product_name item_product_name," +
-            "            oi.product_brand item_product_brand," +
-            "            oi.product_price item_product_price," +
-            "            oi.product_quantity item_product_quantity," +
-            "            oi.product_attr item_product_attr," +
-            "            oi.sp1 item_sp1," +
-            "            oi.sp2 item_sp2," +
-            "            oi.sp3 item_sp3," +
-            "            oh.id history_id," +
-            "            oh.operate_man history_operate_man," +
-            "            oh.create_time history_create_time," +
-            "            oh.order_status history_order_status," +
-            "            oh.note history_note" +
-            "        FROM" +
-            "            oms_order o" +
-            "            LEFT JOIN oms_order_item oi ON o.id = oi.order_id" +
-            "            LEFT JOIN oms_order_operate_history oh ON o.id = oh.order_id" +
-            "        WHERE" +
-            "            o.id = #{id}" +
-            "        ORDER BY oi.id ASC,oh.create_time DESC" +
-            "</script>")
+    @Select(
+            "SELECT o.* FROM  oms_order o  WHERE o.id = #{id}"
+            )
+    @Results({
+            @Result(property = "id",column = "id",javaType = Long.class),
+            @Result(property = "orderItemList",column = "id",javaType = List.class,
+                    many = @Many(select = "com.tuling.tulingmall.ordercurr.mapper.OmsOrderMapper.getOrderItem",fetchType = FetchType.EAGER )
+            ),
+            @Result(property ="historyList",column = "id",javaType = List.class,
+                    many = @Many(select = "com.tuling.tulingmall.ordercurr.mapper.OmsOrderMapper.getHistoryList")
+            )
+    })
     OmsOrderDetail getDetail(@Param("id") Long id);
+    @Select(" SELECT id,product_id, product_sn, product_pic, product_name, product_brand," +
+            " product_price, product_quantity,product_attr, sp1 ,sp2, sp3 " +
+            " FROM oms_order_item as oi" +
+            " WHERE  oi.order_id = #{orderId} ORDER BY oi.id ASC"
+    )
+    @Results({
+            @Result(property = "productSn",column = "product_sn" ,javaType=String.class)
+    })
+
+    List<OmsOrderItem> getOrderItem(@Param("orderId") Long orderId);
+    @Select(" select id,operate_man ,create_time,order_status, note" +
+            " FROM oms_order_operate_history as oh" +
+            " where oh.order_id= #{orderId} ORDER BY oh.create_time DESC")
+    List<OmsOrderOperateHistory> getHistoryList(@Param("orderId")Long orderId);
 }

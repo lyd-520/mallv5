@@ -20,7 +20,7 @@ import java.io.IOException;
  * @desc
  */
 @Controller
-@RequestMapping("/skcart")
+@RequestMapping("/skCart")
 @Api(tags = "CartItemController")
 public class CartItemController {
 
@@ -41,6 +41,7 @@ public class CartItemController {
                                                     @RequestParam("flashPromotionId") Long flashPromotionId) throws BusinessException {
         return secKillConfirmOrderService.generateConfirmMiaoShaOrder(productId,memberId,"",flashPromotionId);
     }
+
 
     /* PO:
         1、从session共享角度来说，验证码应该放入Redis才是正确的，

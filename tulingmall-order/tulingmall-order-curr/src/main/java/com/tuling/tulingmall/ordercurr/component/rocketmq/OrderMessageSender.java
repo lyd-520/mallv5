@@ -6,8 +6,11 @@ import org.apache.rocketmq.client.producer.SendStatus;
 import org.apache.rocketmq.client.producer.TransactionSendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.apache.rocketmq.spring.support.RocketMQHeaders;
+import org.apache.skywalking.apm.toolkit.trace.Tag;
+import org.apache.skywalking.apm.toolkit.trace.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.keyvalue.repository.KeyValueRepository;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
@@ -64,11 +67,14 @@ public class OrderMessageSender {
      * 使用事务消息机制发送订单
      * @return
      */
+    @Trace
+    @Tag(key="CreateOrderMsg",value="生成支付二维码同时反向通知是否取消订单")
     public boolean sendCreateOrderMsg(Long orderId, Long memberId){
 //        SendResult result = rocketMQTemplate.syncSend(asyncOrderTopic+":"+ORDERTAG,message);
         String destination = asyncOrderTopic+":"+ORDERTAG;
         Message<String> message = MessageBuilder.withPayload(orderId+":"+memberId)
                 .build();
+        //消息实际通知下游服务进行订单取消的。
         TransactionSendResult sendResult = rocketMQTemplate.sendMessageInTransaction(destination,message,orderId);
         return SendStatus.SEND_OK == sendResult.getSendStatus();
     }

@@ -19,6 +19,8 @@ spring:
           data-id: tulingmall-redis-key-dev.yml
           group: DEFAULT_GROUP
           refresh: true
+      username: nacos
+      password: nacos
   profiles:
     active: dev
 

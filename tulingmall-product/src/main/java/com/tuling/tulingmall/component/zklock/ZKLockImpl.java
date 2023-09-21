@@ -108,8 +108,8 @@ public class ZKLockImpl implements ZKLock,InitializingBean {
         cache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
 
         /*
-         * 添加监听器
-         */
+//         * 添加监听器
+//         */
         cache.getListenable().addListener((client,event) -> {
             if(event.getType().equals(PathChildrenCacheEvent.Type.CHILD_REMOVED)){
                 String oldPath = event.getData().getPath();

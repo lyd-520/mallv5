@@ -18,3 +18,4 @@ public interface SecKillConfirmOrderService {
             , Long memberId,String token,Long flashPromotionId) throws BusinessException;
 
 }
+

@@ -1,4 +1,6 @@
-spring:
+ spring:
+  shardingsphere:
+    enabled: false
   cloud:
     nacos:
       config:
@@ -9,8 +11,20 @@ spring:
           data-id: tulingmall-nacos.yml
           group: DEFAULT_GROUP
           refresh: true
+        shared-configs[1]:
+          data-id: tulingmall-db-common.yml
+          group: DEFAULT_GROUP
+          refresh: true
+      password: nacos
+      username: nacos
+
+
+
+  #        namespace: aa59e968-e09a-4f0e-a4f8-e086f46d761d
   application:
     name: tulingmall-order-curr
   profiles:
     active: dev
+  main:
+    allow-bean-definition-overriding: true
 

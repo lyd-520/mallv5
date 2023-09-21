@@ -4,6 +4,7 @@ import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
 import com.tuling.tulingmall.ordercurr.component.LocalCache;
 import com.tuling.tulingmall.ordercurr.domain.OrderMessage;
 import com.tuling.tulingmall.ordercurr.service.SecKillOrderService;
+import com.tuling.tulingmall.rediscomm.util.RedisClusterUtil;
 import com.tuling.tulingmall.rediscomm.util.RedisSingleUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
@@ -15,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @description: 消费监听rocketmq-接受创建订单消息
- * 在DB中写入订单数据的部分，变为独立服务或者调用订单微服务更好
+ * 在DB中写入订单数据的部分，变为独立服务或者调用订单微服务order-curr更好
  **/
 @Slf4j
 @Component
@@ -26,9 +27,10 @@ public class AscynCreateOrderReciever implements RocketMQListener<OrderMessage> 
     @Autowired
     private SecKillOrderService secKillOrderService;
 
+//    @Autowired
+//    private RedisSingleUtil redisStockUtil;
     @Autowired
-    private RedisSingleUtil redisStockUtil;
-
+    private RedisClusterUtil redisStockUtil;
     @Autowired
     private LocalCache<Object> cache;
 

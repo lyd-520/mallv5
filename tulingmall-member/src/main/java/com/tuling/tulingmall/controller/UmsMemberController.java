@@ -106,8 +106,9 @@ public class UmsMemberController {
     @ApiOperation("获取验证码")
     @RequestMapping(value = "/getAuthCode", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult getAuthCode(@RequestParam String telephone) {
-        return memberService.generateAuthCode(telephone);
+    //改进
+    public CommonResult getAuthCode(@RequestParam String telephone,HttpServletRequest request) {
+        return memberService.generateAuthCode(telephone,request);
     }
 
     @ApiOperation("修改密码")

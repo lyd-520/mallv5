@@ -32,7 +32,7 @@ public class PromotionRedisKey {
     private String newProductKey;
     private String recProductKey;
     private String homeAdvertiseKey;
-    private String secKillKey;
+    private String  secKillKey;
 
     @PostConstruct
     public void initKey(){

@@ -79,6 +79,7 @@ public class OmsAdminOrderController {
     @ResponseBody
     public CommonResult<OmsOrderDetail> detail(@PathVariable Long id) {
         OmsOrderDetail orderDetailResult = orderService.detail(id);
+        System.out.println(orderDetailResult);
         return CommonResult.success(orderDetailResult);
     }
 

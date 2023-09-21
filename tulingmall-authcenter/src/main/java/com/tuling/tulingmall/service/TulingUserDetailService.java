@@ -45,7 +45,7 @@ public class TulingUserDetailService implements UserDetailsService {
             log.warn("用户登陆用户名为空:{}",userName);
             throw new UsernameNotFoundException("用户名不能为空");
         }
-
+// TODO 会员微服务openfeign调用
         UmsMember umsMember = getByUsername(userName);
 
         if(null == umsMember) {

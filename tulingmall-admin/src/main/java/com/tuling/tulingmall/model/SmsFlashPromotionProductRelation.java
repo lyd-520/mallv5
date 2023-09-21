@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@TableName("tl_mall_promotion.sms_flash_promotion_product_relation")
+@TableName("sms_flash_promotion_product_relation")
 public class SmsFlashPromotionProductRelation implements Serializable {
     @ApiModelProperty(value = "编号")
     private Long id;

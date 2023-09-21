@@ -31,7 +31,7 @@
       p.stock p_stock
     FROM
       sms_flash_promotion_product_relation r
-        LEFT JOIN tl_mall_goods.pms_product p ON r.product_id = p.id
+        LEFT JOIN dbase.pms_product p ON r.product_id = p.id
     WHERE
       r.flash_promotion_id = #{flashPromotionId}
       AND r.flash_promotion_session_id = #{flashPromotionSessionId}

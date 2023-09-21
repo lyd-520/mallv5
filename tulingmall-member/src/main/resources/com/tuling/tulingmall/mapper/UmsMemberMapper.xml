@@ -81,7 +81,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, member_level_id, username, password, nickname, phone, status, create_time, icon, 
+    id,member_level_id, username, password, nickname, phone, status, create_time, icon,
     gender, birthday, city, job, personalized_signature, source_type, integration, growth, 
     luckey_count, history_integration
   </sql>
@@ -91,7 +91,7 @@
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from ums_member
+    from dbase.ums_member
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -102,15 +102,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from ums_member
+    from dbase.ums_member
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from ums_member
+    delete from dbase.ums_member
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.tuling.tulingmall.model.UmsMemberExample">
-    delete from ums_member
+    delete from dbase.ums_member
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -119,7 +119,7 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into ums_member (member_level_id, username, password, 
+    insert into dbase.ums_member (member_level_id, username, password, 
       nickname, phone, status, 
       create_time, icon, gender, 
       birthday, city, job, personalized_signature, 
@@ -136,7 +136,7 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into ums_member
+    insert into dbase.ums_member
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="memberLevelId != null">
         member_level_id,
@@ -251,13 +251,13 @@
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.tuling.tulingmall.model.UmsMemberExample" resultType="java.lang.Long">
-    select count(*) from ums_member
+    select count(*) from dbase.ums_member
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update ums_member
+    update dbase.ums_member
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -322,7 +322,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update ums_member
+    update dbase.ums_member
     set id = #{record.id,jdbcType=BIGINT},
       member_level_id = #{record.memberLevelId,jdbcType=BIGINT},
       username = #{record.username,jdbcType=VARCHAR},
@@ -347,7 +347,7 @@
     </if>
   </update>
   <update id="updateByPrimaryKeySelective" parameterType="com.tuling.tulingmall.model.UmsMember">
-    update ums_member
+    update dbase.ums_member
     <set>
       <if test="memberLevelId != null">
         member_level_id = #{memberLevelId,jdbcType=BIGINT},
@@ -407,7 +407,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.tuling.tulingmall.model.UmsMember">
-    update ums_member
+    update dbase.ums_member
     set member_level_id = #{memberLevelId,jdbcType=BIGINT},
       username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},

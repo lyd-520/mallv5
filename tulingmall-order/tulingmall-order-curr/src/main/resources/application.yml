@@ -8,12 +8,73 @@ feign:
         readTimeout: 3000
         connectTimeout: 3000
 mybatis:
+  mapper-locations:
+      - classpath:dao/*.xml
+      - classpath:mapper/*.xml
   configuration:
     map-underscore-to-camel-case: true
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#rocketmq:
+#  name-server: 127.0.0.1:9876
+#  producer:
+#    group: async-order-group
+
+seata:
+  application‐id: ${spring.application.name}
+  # seata 服务分组，要与服务端配置service.vgroup_mapping的后缀对应
+  tx‐service‐group: mallv5
+  registry:
+  # 指定nacos作为注册中心
+    type: nacos
+    nacos:
+      application: seata-server
+      server‐addr: 127.0.0.1:8848
+      group: DEFAULT_GROUP
+      username: nacos
+      password: nacos
+      cluster: DEFAULT
+
+
+  config:
+   # 指定nacos作为配置中心
+    type: nacos
+    nacos:
+      server‐addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      data‐id: seataServer.properties
+      username: nacos
+      password: nacos
+#  enabled: false
+#  secret-key: SeataSecretKey0c382ef121d778043159209298fd40bf3850a017
+
+#  service:
+#    vgroup-mapping:
+#     default_tx_group: default
+
 
 #支付-当面付qrcode存储与访问路径设置
-#trade:
-#  zhifu:
-#    qrcode:
-#      storePath: C:/temp/qr-code
-#      paySuccessCallBack: http://roykingw.free.idcfengye.com/order/paySuccess
+trade:
+  zhifu:
+    qrcode:
+      aliPayPath: /qr-code
+      storePath: D:/alipay
+      paySuccessCallBack: http://mallv5.v2.idcfengye.com/order/paySuccess
+      http-base-path: /order/qrcodeImg
+spring:
+  redis:
+    cluster:
+      nodes: 127.0.0.1:6379,127.0.0.1:6380,127.0.0.1:6381
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/dbase?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: lyd0821666
+    druid:
+      initial-size: 5 #连接池初始化大小
+      min-idle: 10 #最小空闲连接数
+      max-active: 20 #最大连接数
+      web-stat-filter:
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" #不统计这些请求数据
+      stat-view-servlet: #访问监控网页的登录用户名和密码
+        login-username: druid
+        login-password: druid

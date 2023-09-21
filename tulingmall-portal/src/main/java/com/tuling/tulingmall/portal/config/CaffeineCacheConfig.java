@@ -18,8 +18,8 @@ public class CaffeineCacheConfig {
     public Cache<String, HomeContentResult> promotionCache() {
         int rnd = ThreadLocalRandom.current().nextInt(10);
         return Caffeine.newBuilder()
-                // 设置最后一次写入经过固定时间过期
-                .expireAfterWrite(30 + rnd, TimeUnit.MINUTES)
+                // 设置最后一次【写入】经过固定时间过期(真实项目为分钟单位）
+                .expireAfterWrite(30 + rnd, TimeUnit.SECONDS)
                 // 初始的缓存空间大小
                 .initialCapacity(20)
                 // 缓存的最大条数
@@ -34,8 +34,8 @@ public class CaffeineCacheConfig {
     public Cache<String, HomeContentResult> promotionCacheBak() {
         int rnd = ThreadLocalRandom.current().nextInt(10);
         return Caffeine.newBuilder()
-                // 设置最后一次访问经过固定时间过期
-                .expireAfterAccess(41 + rnd, TimeUnit.MINUTES)
+                // 设置最后一次【访问】经过固定时间过期
+                .expireAfterAccess(41 + rnd, TimeUnit.MILLISECONDS)
                 // 初始的缓存空间大小
                 .initialCapacity(20)
                 // 缓存的最大条数
@@ -43,9 +43,9 @@ public class CaffeineCacheConfig {
                 .build();
     }
 
-    /*秒杀信息在首页的缓存*/
+    /*秒杀信息在首页的缓存,应为timeunit.MILLISECONDS*/
     @Bean(name = "secKill")
-    public Cache<String, List<FlashPromotionProduct>> secKillCache() {
+    public Cache<String, List<List<FlashPromotionProduct>>> secKillCache() {
         int rnd = ThreadLocalRandom.current().nextInt(400);
         return Caffeine.newBuilder()
                 // 设置最后一次写入经过固定时间过期
@@ -59,11 +59,11 @@ public class CaffeineCacheConfig {
 
     /*秒杀信息在首页的缓存备份，提升首页的访问性能*/
     @Bean(name = "secKillBak")
-    public Cache<String, List<FlashPromotionProduct>> secKillCacheBak() {
+    public Cache<String, List<List<FlashPromotionProduct>>> secKillCacheBak() {
         int rnd = ThreadLocalRandom.current().nextInt(400);
         return Caffeine.newBuilder()
                 // 设置最后一次写入经过固定时间过期
-                .expireAfterWrite(100 + rnd, TimeUnit.MILLISECONDS)
+                .expireAfterWrite(100 + rnd, TimeUnit.SECONDS)
                 // 初始的缓存空间大小
                 .initialCapacity(20)
                 // 缓存的最大条数

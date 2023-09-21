@@ -39,7 +39,8 @@ public class PromotionRedisKey {
 
     @Value ("${promotion.distlock.timeOut:5000}")
     private long dlTimeout;
-
+    @Value ("${promotion.seckill:sk}")
+    private String secKill;
     private String dlBrandKey;
     private String dlNewProductKey;
     private String dlRecProductKey;
@@ -62,6 +63,7 @@ public class PromotionRedisKey {
         dlNewProductKey = promotionNamespace + "." + dlNewProduct;
         dlRecProductKey = promotionNamespace + "." + dlRecProduct;
         dlHomeAdvertiseKey = promotionNamespace + "." + dlHomeAdvertise;
+        secKillKey = promotionNamespace + "." + secKill;
         StringBuilder logKeyStr = new StringBuilder();
         logKeyStr.append("[品牌推荐redis主键=").append(brandKey)
                 .append("] [新品推荐redis主键=").append(newProductKey)

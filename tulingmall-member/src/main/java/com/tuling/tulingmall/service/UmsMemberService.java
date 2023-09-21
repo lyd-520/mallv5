@@ -5,6 +5,8 @@ import com.tuling.tulingmall.common.api.TokenInfo;
 import com.tuling.tulingmall.model.UmsMember;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 会员管理Service
  * Created by macro on 2018/8/3.
@@ -29,7 +31,7 @@ public interface UmsMemberService {
     /**
      * 生成验证码
      */
-    CommonResult generateAuthCode(String telephone);
+    CommonResult generateAuthCode(String telephone , HttpServletRequest request);
 
     /**
      * 修改密码

@@ -19,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -76,48 +77,67 @@ public class HomePromotionServiceImpl implements HomePromotionService {
         }
         return result;
     }
-
+    public List<List<FlashPromotionProduct>> secKillContent(int status){
+        final String secKillKey = promotionRedisKey.getSecKillKey();
+        List<List<FlashPromotionProduct>> result= redisOpsExtUtil.getListAll(secKillKey,List.class);
+        if(CollectionUtils.isEmpty(result)) {
+            List<Long> fullIds = flashPromotionProductDao.getAllPromotionIds(status);
+            fullIds.forEach(id -> {
+                List<FlashPromotionProduct> content = secKillContent(id, status);
+                if (content!=null) result.add(content);
+            });
+            redisOpsExtUtil.putListAllRight(secKillKey,result);
+        }
+        return result;
+    }
     /*获取秒杀内容*/
     @Override
     public List<FlashPromotionProduct> secKillContent(long secKillId,int status) {
-        PageHelper.startPage(1, 8);
-        Long secKillIdL = -1 == secKillId ? null : secKillId;
-        /*获得秒杀相关的活动信息*/
-        FlashPromotionParam flashPromotionParam = flashPromotionProductDao.getFlashPromotion(secKillIdL,status);
-        if (flashPromotionParam == null || CollectionUtils.isEmpty(flashPromotionParam.getRelation())) {
+        //再次从redis获取seckill信息
+        final String secKillKey = promotionRedisKey.getSecKillKey()+"_"+secKillId;
+        List<FlashPromotionProduct> flashPromotionProducts= redisOpsExtUtil.getListAll(secKillKey,FlashPromotionProduct.class);
+        if(CollectionUtils.isEmpty(flashPromotionProducts)){
+            //从数据库获取基本信息
+           PageHelper.startPage(1, 8);
+           Long secKillIdL = -1 == secKillId ? null : secKillId;
+            /*获得秒杀相关的活动信息*/
+           FlashPromotionParam flashPromotionParam = flashPromotionProductDao.getFlashPromotion(secKillIdL,status);
+           if (flashPromotionParam == null || CollectionUtils.isEmpty(flashPromotionParam.getRelation())) {
             return null;
-        }
-        /*获得秒杀相关的商品信息,map用来快速寻找秒杀商品的限购信息*/
-        List<Long> productIds = new ArrayList<>();
-        Map<Long,SmsFlashPromotionProductRelation> temp = new HashMap<>();
-        flashPromotionParam.getRelation().stream().forEach(item -> {
-            productIds.add(item.getProductId());
-            temp.put(item.getProductId(),item);
-        });
-        PageHelper.clearPage();
-        List<PmsProduct> secKillProducts = pmsProductClientApi.getProductBatch(productIds);
-        /*拼接前端需要的内容*/
-        List<FlashPromotionProduct> flashPromotionProducts = new ArrayList<>();
-        int loop = 0;
-        int serverSize = secKillServerList.size();
-        for(PmsProduct product : secKillProducts){
-            FlashPromotionProduct flashPromotionProduct = new FlashPromotionProduct();
-            BeanUtils.copyProperties(product,flashPromotionProduct);
-            Long productId = product.getId();
-            SmsFlashPromotionProductRelation item = temp.get(productId);
-            flashPromotionProduct.setFlashPromotionCount(item.getFlashPromotionCount());
-            flashPromotionProduct.setFlashPromotionPrice(item.getFlashPromotionPrice());
-            flashPromotionProduct.setFlashPromotionLimit(item.getFlashPromotionLimit());
-            flashPromotionProduct.setRelationId(item.getId());
-            Long flashPromotionId = item.getFlashPromotionId();
-            flashPromotionProduct.setFlashPromotionId(flashPromotionId);
-            flashPromotionProduct.setFlashPromotionStartDate(flashPromotionParam.getStartDate());
-            flashPromotionProduct.setFlashPromotionEndDate(flashPromotionParam.getEndDate());
-            String url = secKillServerList.get(loop % serverSize)+"/product?"+"flashPromotionId="+flashPromotionId
-                    +"&promotionProductId="+productId;
-            flashPromotionProduct.setSecKillServer(url);
-            flashPromotionProducts.add(flashPromotionProduct);
-            loop++;
+           }
+           /*获得秒杀相关的商品信息,map用来快速寻找秒杀商品的限购信息*/
+           List<Long> productIds = new ArrayList<>();
+           Map<Long,SmsFlashPromotionProductRelation> temp = new HashMap<>();
+           flashPromotionParam.getRelation().stream().forEach(item -> {
+              productIds.add(item.getProductId());
+              temp.put(item.getProductId(),item);
+           });
+           PageHelper.clearPage();
+           //调用product微服务
+           List<PmsProduct> secKillProducts = pmsProductClientApi.getProductBatch(productIds);
+           /*拼接前端需要的内容，选择nginx服务器*/;
+           int loop = 0;
+           int serverSize = secKillServerList.size();
+           for(PmsProduct product : secKillProducts){
+              FlashPromotionProduct flashPromotionProduct = new FlashPromotionProduct();
+              BeanUtils.copyProperties(product,flashPromotionProduct);
+              Long productId = product.getId();
+              SmsFlashPromotionProductRelation item = temp.get(productId);
+              flashPromotionProduct.setFlashPromotionCount(item.getFlashPromotionCount());
+              flashPromotionProduct.setFlashPromotionPrice(item.getFlashPromotionPrice());
+              flashPromotionProduct.setFlashPromotionLimit(item.getFlashPromotionLimit());
+              flashPromotionProduct.setRelationId(item.getId());
+              Long flashPromotionId = item.getFlashPromotionId();
+              flashPromotionProduct.setFlashPromotionId(flashPromotionId);
+              flashPromotionProduct.setFlashPromotionStartDate(flashPromotionParam.getStartDate());
+              flashPromotionProduct.setFlashPromotionEndDate(flashPromotionParam.getEndDate());
+              String url = secKillServerList.get(loop % serverSize)+"/product?"+"flashPromotionId="+flashPromotionId
+                      +"&promotionProductId="+productId;
+              flashPromotionProduct.setSecKillServer(url);
+              flashPromotionProducts.add(flashPromotionProduct);
+              loop++;
+           }
+           redisOpsExtUtil.putListAllRight(secKillKey,flashPromotionProducts);
         }
         return flashPromotionProducts;
     }
@@ -131,6 +151,8 @@ public class HomePromotionServiceImpl implements HomePromotionService {
     }
 
     /*获取推荐品牌*/
+    /*获取人气推荐产品*/
+
     private void getRecommendBrand(HomeContentResult result){
         final String brandKey = promotionRedisKey.getBrandKey();
         List<PmsBrand> recommendBrandList = redisOpsExtUtil.getListAll(brandKey, PmsBrand.class);
@@ -155,8 +177,6 @@ public class HomePromotionServiceImpl implements HomePromotionService {
             result.setBrandList(recommendBrandList);
         }
     }
-
-    /*获取人气推荐产品*/
     private void getRecommendProducts(HomeContentResult result){
         final String recProductKey = promotionRedisKey.getRecProductKey();
         List<PmsProduct> recommendProducts = redisOpsExtUtil.getListAll(recProductKey, PmsProduct.class);

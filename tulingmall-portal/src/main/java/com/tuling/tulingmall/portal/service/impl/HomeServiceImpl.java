@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -59,11 +60,11 @@ public class HomeServiceImpl implements HomeService {
 
     @Autowired
     @Qualifier("secKill")
-    private Cache<String, List<FlashPromotionProduct>> secKillCache;
+    private Cache<String, List<List<FlashPromotionProduct>>> secKillCache;
 
     @Autowired
     @Qualifier("secKillBak")
-    private Cache<String, List<FlashPromotionProduct>> secKillCacheBak;
+    private Cache<String, List<List<FlashPromotionProduct>>> secKillCacheBak;
 
     @Override
     public HomeContentResult cmsContent(HomeContentResult content) {
@@ -95,7 +96,7 @@ public class HomeServiceImpl implements HomeService {
         }
         /* 处理秒杀内容*/
         final String secKillKey = promotionRedisKey.getSecKillKey();
-        List<FlashPromotionProduct> secKills = secKillCache.getIfPresent(secKillKey);
+        List<List<FlashPromotionProduct>> secKills = secKillCache.getIfPresent(secKillKey);
         if(CollectionUtils.isEmpty(secKills)){
             secKills = secKillCacheBak.getIfPresent(secKillKey);
         }
@@ -110,7 +111,7 @@ public class HomeServiceImpl implements HomeService {
             }else{
                 /*Redis缓存中也没有秒杀活动信息，此处用一个空List代替，
                 * 其实可以用固定的图片或信息，作为降级和兜底方案*/
-                secKills = new ArrayList<FlashPromotionProduct>();
+                secKills = Collections.singletonList(new ArrayList<FlashPromotionProduct>());
             }
         }
         result.setHomeFlashPromotion(secKills);
@@ -119,12 +120,12 @@ public class HomeServiceImpl implements HomeService {
         return result;
     }
 
-    public List<FlashPromotionProduct> getSecKillFromRemote(){
-        List<FlashPromotionProduct> result = redisOpsUtil.getListAll(promotionRedisKey.getSecKillKey(),
-                FlashPromotionProduct.class);
-//        if(CollectionUtil.isEmpty(result)){
-//            result = promotionFeignApi.getHomeSecKillProductList().getData();
-//        }
+    public List<List<FlashPromotionProduct>> getSecKillFromRemote(){
+        List<List<FlashPromotionProduct>> result = redisOpsUtil.getListAll(promotionRedisKey.getSecKillKey(),
+           List.class);
+        if(CollectionUtil.isEmpty(result)){
+            result = promotionFeignApi.getHomeSecKillProductList(-1,1).getData();
+        }
         return result;
     }
     /*从远程(Redis或者对应微服务)获取推荐内容*/
@@ -161,7 +162,7 @@ public class HomeServiceImpl implements HomeService {
     public void preheatCache(){
         try {
             final String secKillKey = promotionRedisKey.getSecKillKey();
-            List<FlashPromotionProduct> secKillResult = getSecKillFromRemote();
+            List<List<FlashPromotionProduct>> secKillResult = getSecKillFromRemote();
             secKillCache.put(secKillKey,secKillResult);
             secKillCacheBak.put(secKillKey,secKillResult);
             log.info("秒杀数据本地缓存预热完成");

@@ -19,7 +19,10 @@ public interface PromotionFeignApi {
     /*获得秒杀内容*/
     @RequestMapping(value = "/getHomeSecKillProductList", method = RequestMethod.GET)
     @ResponseBody
-    CommonResult<List<FlashPromotionProduct>> getHomeSecKillProductList(
+    CommonResult<List<List<FlashPromotionProduct>>> getHomeSecKillProductList(
             @RequestParam(value = "secKillId") long secKillId,
-            @RequestParam(value = "status") long status);
+            @RequestParam(value = "status") int status);
+
+
+
 }

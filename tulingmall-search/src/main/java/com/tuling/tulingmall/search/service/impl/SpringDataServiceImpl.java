@@ -30,9 +30,9 @@ public class SpringDataServiceImpl implements SpringDataService {
     @Autowired
     private RestHighLevelClient client;
 
+
     @Autowired
     private EsProductRepository productRepository;
-
 
 
 

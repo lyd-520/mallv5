@@ -22,7 +22,7 @@ public class HomeContentResult {
     //推荐品牌
     private List<PmsBrand> brandList;
 
-    private List<FlashPromotionProduct> homeFlashPromotion;
+    private List<List<FlashPromotionProduct>> homeFlashPromotion;
     //新品推荐
     private List<PmsProduct> newProductList;
     //人气推荐

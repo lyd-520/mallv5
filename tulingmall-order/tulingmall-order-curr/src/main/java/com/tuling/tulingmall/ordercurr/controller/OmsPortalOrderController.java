@@ -163,7 +163,7 @@ public class OmsPortalOrderController {
     public CommonResult<List<OmsOrderDetail>> findMemberOrderList(
             @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
             @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-            @RequestParam(value = "memberId") Long memberId,
+            @RequestHeader(value = "memberId") Long memberId,
             @RequestParam(value = "status",required = false) Integer status){
 
         if(memberId == null || (status!=null && status > 4)){
@@ -197,7 +197,7 @@ public class OmsPortalOrderController {
     @ApiOperation("订单支付状态查询,手动查询#实现支付宝查询")
     @ApiImplicitParams({@ApiImplicitParam(name = "payType", value = "支付方式:0->未支付,1->支付宝支付,2->微信支付",
             allowableValues = "1,2", paramType = "query", dataType = "integer")})
-    @RequestMapping(value = "/tradeStatusQuery",method = RequestMethod.POST)
+    @RequestMapping(value = "/tradeStatusQuery",method = RequestMethod.GET)
     @ResponseBody
     public CommonResult tradeStatusQuery(@RequestParam(value = "orderId") Long orderId,
                                          @RequestParam(value = "payType") Integer payType){

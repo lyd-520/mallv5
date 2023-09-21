@@ -59,11 +59,20 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
     * key ：RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId
                     + ":" + productId
      而且 消息消费者在数据库中生成订单后，修改了这个状态，参见：AscynCreateOrderReciever*/
-    public CommonResult checkOrder(Long orderId){
-        if(null != orderMapper.selectByPrimaryKey(orderId)){
-            return CommonResult.success("success");
-        }else{
-            return CommonResult.doing();
+    public CommonResult checkOrder(Long orderId,Long productId,Long memberId){
+        String status = redisStockUtil.get(RedisKeyPrefixConst.MIAOSHA_ASYNC_WAITING_PREFIX + memberId
+                + ":" + productId);
+        if(status!=null){
+            return new CommonResult(666,"查询成功",Long.parseLong(status));
+        }
+//        if(status==1) return CommonResult.success("waiting","下单人数较多，正在排队中");
+//        else if(status==-1) return CommonResult.success("failture","异步下单失败，请重试");
+//        else if(status!=null) return CommonResult.success("success");
+        else {
+            if (null != orderMapper.selectByPrimaryKey(orderId)) {
+                return CommonResult.success("success");
+            } else return CommonResult.failed("nothingToFind");
+
         }
     }
 
@@ -254,7 +263,7 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
     }
 
     /*Redis中扣减库存*/
-    private boolean preDecrRedisStock(Long productId) {
+    private boolean  preDecrRedisStock(Long productId) {
         Long stock = redisStockUtil.decr(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId);
         if (stock < 0) {
             /* 还原缓存里的库存，主要是 当stock < 0时，有订单取消之类回滚库存的操作时，

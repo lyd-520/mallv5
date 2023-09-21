@@ -87,7 +87,7 @@ public class SmsCouponServiceImpl implements SmsCouponService {
         couponParam.setId(id);
         int count =couponMapper.deleteById(couponParam);
         //删除后插入优惠券和商品关系表
-        if(couponParam.getUseType().equals(2)){
+        if(couponParam.getUseType().equals(2)&&couponParam.getProductRelationList()!=null){
             for(SmsCouponProductRelation productRelation:couponParam.getProductRelationList()){
                 productRelation.setCouponId(couponParam.getId());
             }
@@ -95,7 +95,7 @@ public class SmsCouponServiceImpl implements SmsCouponService {
             productRelationDao.insertList(couponParam.getProductRelationList());
         }
         //删除后插入优惠券和商品分类关系表
-        if(couponParam.getUseType().equals(1)){
+        if(couponParam.getUseType().equals(1)&&couponParam.getProductCategoryRelationList()!=null){
             for (SmsCouponProductCategoryRelation couponProductCategoryRelation : couponParam.getProductCategoryRelationList()) {
                 couponProductCategoryRelation.setCouponId(couponParam.getId());
             }

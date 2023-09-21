@@ -16,10 +16,12 @@ public class preheatCache implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        for(String str : args) {
-            log.info("系统启动命令行参数: {}",str);
+        for (String str : args) {
+            log.info("系统启动命令行参数: {}", str);
         }
-        homeService.preheatCache();
+            homeService.preheatCache();
+//        } catch (Exception e) {
+//            log.info("请检查feignApi或redis");
+//        }
     }
-
 }

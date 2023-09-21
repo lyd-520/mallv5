@@ -1,11 +1,13 @@
 server:
   port: 8054
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   datasource:
-    url: jdbc:mysql://192.168.65.71:3306/tl_mall_goods?characterEncoding=utf-8&useSSL=false
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: tlmall
-    password: tlmall123
+    url: jdbc:mysql://localhost:3306/dbase?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: lyd0821666
     druid:
       initial-size: 5 #连接池初始化大小
       min-idle: 10 #最小空闲连接数
@@ -24,10 +26,6 @@ spring:
 #      cluster-name: elasticsearch
   application:
     name: tulingmall-search
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 192.168.65.206:8848,192.168.65.209:8848,192.168.65.210:8848
 #  data:
 #    elasticsearch:
 #      rest:

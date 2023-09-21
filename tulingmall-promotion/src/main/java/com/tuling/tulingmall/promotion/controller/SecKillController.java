@@ -2,22 +2,23 @@ package com.tuling.tulingmall.promotion.controller;
 
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.promotion.dao.MiaoShaStockDao;
-import com.tuling.tulingmall.promotion.domain.CartPromotionItem;
 import com.tuling.tulingmall.promotion.domain.FlashPromotionProduct;
-import com.tuling.tulingmall.promotion.domain.SmsCouponHistoryDetail;
-import com.tuling.tulingmall.promotion.model.SmsCouponHistory;
 import com.tuling.tulingmall.promotion.service.HomePromotionService;
 import com.tuling.tulingmall.promotion.service.ISecKillStaticHtmlService;
-import com.tuling.tulingmall.promotion.service.UserCouponService;
 import com.tuling.tulingmall.promotion.service.impl.ConstantPromotion;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,13 +38,22 @@ public class SecKillController {
     private ISecKillStaticHtmlService secKillStaticHtmlService;
 
     /*获得秒杀内容*/
-    @ApiOperation("获取秒杀产品")
+    @ApiOperation("获取首页所有秒杀产品")
     @RequestMapping(value = "/getHomeSecKillProductList", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult<List<FlashPromotionProduct>> getHomeSecKillProductList(
+    public CommonResult<List<List<FlashPromotionProduct>>> getHomeSecKillProductList(
             @RequestParam(required = false,defaultValue = "-1") long secKillId,
             @RequestParam(required = false,defaultValue = "1") int status){
-        List<FlashPromotionProduct> result = homePromotionService.secKillContent(secKillId,status);
+        List<List<FlashPromotionProduct>> result=new ArrayList<>();
+        if(secKillId==-1)    result = homePromotionService.secKillContent(status);
+        else  {
+            List<List<FlashPromotionProduct>> list = new ArrayList<>();
+            List<FlashPromotionProduct> flashPromotionProducts = homePromotionService.secKillContent(secKillId, status);
+            if(!CollectionUtils.isEmpty(flashPromotionProducts)){
+                    list.add(flashPromotionProducts);
+                    result=list;
+            }
+        }
         return CommonResult.success(result);
     }
 

@@ -3,6 +3,7 @@ package com.tuling.tulingmall.ordercurr.domain;
 
 import com.tuling.tulingmall.ordercurr.model.OmsOrder;
 import com.tuling.tulingmall.ordercurr.model.OmsOrderItem;
+import com.tuling.tulingmall.ordercurr.model.OmsOrderOperateHistory;
 
 import java.util.List;
 
@@ -13,6 +14,16 @@ import java.util.List;
 public class OmsOrderDetail extends OmsOrder {
     private List<OmsOrderItem> orderItemList;
 
+    public List<OmsOrderOperateHistory> getHistoryList() {
+        return historyList;
+    }
+
+    public void setHistoryList(List<OmsOrderOperateHistory> historyList) {
+        this.historyList = historyList;
+    }
+
+    private List<OmsOrderOperateHistory> historyList;
+
     public List<OmsOrderItem> getOrderItemList() {
         return orderItemList;
     }
@@ -20,4 +31,12 @@ public class OmsOrderDetail extends OmsOrder {
     public void setOrderItemList(List<OmsOrderItem> orderItemList) {
         this.orderItemList = orderItemList;
     }
+
+//    @Override
+//    public String toString() {
+//        return "OmsOrderDetail{" +
+//                "orderItemList=" + orderItemList +
+//                ", historyList=" + historyList +
+//                '}';
+//    }
 }

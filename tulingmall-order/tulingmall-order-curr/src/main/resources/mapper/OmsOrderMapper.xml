@@ -844,7 +844,7 @@
                 gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
             </if>
             <if test="version != null">
-                version = #{version,jdbcType=INTEGER},
+                version = #{version,jdbcType=INTEGER}
             </if>
         </set>
         where id = #{id,jdbcType=BIGINT}

@@ -15,7 +15,7 @@ import java.util.Map;
  **/
 public interface SecKillOrderService {
 
-    CommonResult checkOrder(Long orderId);
+    CommonResult checkOrder(Long orderId,Long productId,Long memberId);
 
 
     /**
@@ -57,5 +57,6 @@ public interface SecKillOrderService {
     FlashPromotionProduct getProductInfo(Long flashPromotionId,Long productId);
 
     void failSendMessage(long productId, Map<String,Object> result);
+
 
 }

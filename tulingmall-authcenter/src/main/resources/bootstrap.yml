@@ -16,6 +16,12 @@ spring:
           data-id: tulingmall-db-common.yml
           group: DEFAULT_GROUP
           refresh: true
+      username: nacos
+      password: nacos
+
+  datasource:
+    dynamic:
+      primary: oauth2
 logging:
   level:
     com:

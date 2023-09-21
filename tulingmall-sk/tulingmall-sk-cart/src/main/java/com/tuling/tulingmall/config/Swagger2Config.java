@@ -1,14 +1,11 @@
-package com.tuling.tulingmall.config;
+
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ApiKey;
-import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.SecurityReference;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -19,6 +16,7 @@ import java.util.List;
 
 /**
  * Swagger2API文档的配置
+ * Created by tuling on 2018/4/26.
  */
 @Configuration
 @EnableSwagger2
@@ -28,7 +26,7 @@ public class Swagger2Config {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.tuling.tulingmall.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.tuling.tulingmall.portal.controller"))
                 .paths(PathSelectors.any())
                 .build()
                 .securitySchemes(securitySchemes())
@@ -39,14 +37,14 @@ public class Swagger2Config {
         return new ApiInfoBuilder()
                 .title("tuling-mall前台系统")
                 .description("tuling-mall前台模块")
-                .contact("tuling")
+                .contact(new Contact("tuling",null,null))
                 .version("1.0")
                 .build();
     }
 
-    private List<ApiKey> securitySchemes() {
+    private List<SecurityScheme> securitySchemes() {
         //设置请求头信息
-        List<ApiKey> result = new ArrayList<>();
+        List<SecurityScheme> result = new ArrayList<>();
         ApiKey apiKey = new ApiKey("Authorization", "Authorization", "header");
         result.add(apiKey);
         return result;

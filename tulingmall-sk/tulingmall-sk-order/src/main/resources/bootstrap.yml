@@ -1,4 +1,29 @@
+
 spring:
+  datasource:
+#    druid:
+#      initial-size: 5 #连接池初始化大小
+#      min-idle: 10 #最小空闲连接数
+#      max-active: 20 #最大连接数
+#      web-stat-filter:
+#        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" #不统计这些请求数据
+#      stat-view-servlet: #访问监控网页的登录用户名和密码
+#        login-username: druid
+#        login-password: druid
+      dynamic:
+        datasource:
+          skOrder:
+            driver-class-name: com.mysql.cj.jdbc.Driver
+            url: jdbc:mysql://localhost:3306/dbase?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+            username: root
+            password: lyd0821666
+        primary: skOrder
+
+
+
+
+  shardingsphere:
+    enabled: false
   cloud:
     nacos:
       config:
@@ -11,8 +36,13 @@ spring:
           refresh: true
       discovery:
         server-addr: 127.0.0.1:8848
+      username: nacos
+      password: nacos
   application:
     name: tulingmall-sk-order
   profiles:
     active: dev
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 

@@ -37,11 +37,11 @@ public class IDAllocDaoImpl implements IDAllocDao {
     }
 
     @Override
-    public LeafAlloc updateMaxIdAndGetLeafAlloc(String tag) {
+    public LeafAlloc updateMaxIdByCustomStepAndGetLeafAlloc(LeafAlloc leafAlloc) {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         try {
-            sqlSession.update("com.tuling.leafcore.segment.dao.IDAllocMapper.updateMaxId", tag);
-            LeafAlloc result = sqlSession.selectOne("com.tuling.leafcore.segment.dao.IDAllocMapper.getLeafAlloc", tag);
+            sqlSession.update("com.tuling.leafcore.segment.dao.IDAllocMapper.updateMaxIdByCustomStep", leafAlloc);
+            LeafAlloc result = sqlSession.selectOne("com.tuling.leafcore.segment.dao.IDAllocMapper.getLeafAlloc", leafAlloc.getKey());
             sqlSession.commit();
             return result;
         } finally {
@@ -50,11 +50,11 @@ public class IDAllocDaoImpl implements IDAllocDao {
     }
 
     @Override
-    public LeafAlloc updateMaxIdByCustomStepAndGetLeafAlloc(LeafAlloc leafAlloc) {
+    public LeafAlloc updateMaxIdAndGetLeafAlloc(String tag) {
         SqlSession sqlSession = sqlSessionFactory.openSession();
         try {
-            sqlSession.update("com.tuling.leafcore.segment.dao.IDAllocMapper.updateMaxIdByCustomStep", leafAlloc);
-            LeafAlloc result = sqlSession.selectOne("com.tuling.leafcore.segment.dao.IDAllocMapper.getLeafAlloc", leafAlloc.getKey());
+            sqlSession.update("com.tuling.leafcore.segment.dao.IDAllocMapper.updateMaxId", tag);
+            LeafAlloc result = sqlSession.selectOne("com.tuling.leafcore.segment.dao.IDAllocMapper.getLeafAlloc", tag);
             sqlSession.commit();
             return result;
         } finally {

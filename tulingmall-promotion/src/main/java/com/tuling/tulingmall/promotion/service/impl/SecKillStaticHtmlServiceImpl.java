@@ -8,6 +8,7 @@ import com.tuling.tulingmall.promotion.service.nginx.SftpUploadService;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,16 +63,17 @@ public class SecKillStaticHtmlServiceImpl implements ISecKillStaticHtmlService {
     private SftpUploadService sftpUploadService;
 
     @PostConstruct
-    public void init(){
-        templateDir = System.getProperty("user.home") + templateDir;
-        htmlDir = System.getProperty("user.home") + htmlDir;
+    public void init(){  String userHome = System.getenv().get("temp");
+        if(userHome==null) userHome="D:/tmp";
+        templateDir = userHome + templateDir;
+        htmlDir = userHome  + htmlDir;
     }
 
     /*具体产品页面的静态化*/
     private String toStatic(FlashPromotionProduct flashPromotionProduct) throws IOException, TemplateException {
         String outPath = "";
         // 第一步：创建一个Configuration对象，直接new一个对象。构造方法的参数就是freemarker对于的版本号。
-        Configuration configuration = new Configuration(Configuration.getVersion());
+        Configuration configuration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         // 第二步：设置模板文件所在的路径。
         configuration.setDirectoryForTemplateLoading(new File(templateDir));
         // 第三步：设置模板文件使用的字符集。一般就是utf-8.

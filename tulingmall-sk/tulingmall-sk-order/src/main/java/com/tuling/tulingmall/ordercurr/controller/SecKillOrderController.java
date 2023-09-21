@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @Controller
 @Api(tags = "SeckillOrderController",description = "秒杀订单管理")
-@RequestMapping("/seckillOrder")
+@RequestMapping("/skOrder")
 public class SecKillOrderController {
 
     @Autowired
@@ -36,8 +36,10 @@ public class SecKillOrderController {
     @ApiOperation("查询秒杀订单是否生成")
     @RequestMapping(value = "/checkOrder",method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult checkOrder(@RequestParam("orderId") Long orderId) throws BusinessException {
-        return secKillOrderService.checkOrder(orderId);
+    public CommonResult checkOrder(@RequestParam Long orderId,
+                                   @RequestParam Long productId,
+                                   @RequestHeader("memberId") Long memberId) throws BusinessException {
+        return secKillOrderService.checkOrder(orderId,productId,memberId);
     }
 
 }

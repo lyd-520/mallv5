@@ -4,6 +4,8 @@ import com.tuling.tulingmall.ordercurr.service.OmsPortalOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
+import org.apache.skywalking.apm.toolkit.trace.Tag;
+import org.apache.skywalking.apm.toolkit.trace.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -25,6 +27,8 @@ public class RocketMqCancelOrderReciever implements RocketMQListener<String> {
      * @param message orderId:memberId
      */
     @Override
+    @Tag(key = "cancelOrder",value="订单超时，取消订单")
+    @Trace
     public void onMessage(String message) {
         log.info("监控到订单支付超时事件，取消超时订单：message = "+message);
         if(StringUtils.isEmpty(message)){

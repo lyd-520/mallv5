@@ -67,15 +67,19 @@ public class TulingAuthServerConfig extends AuthorizationServerConfigurerAdapter
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        //jwt的密钥
+        //jwt的密钥 非对称加密
         converter.setKeyPair(keyPair());
         return converter;
     }
 
     @Bean
     public KeyPair keyPair() {
-        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(new ClassPathResource(jwtCAProperties.getKeyPairName()), jwtCAProperties.getKeyPairSecret().toCharArray());
-        return keyStoreKeyFactory.getKeyPair(jwtCAProperties.getKeyPairAlias(), jwtCAProperties.getKeyPairStoreSecret().toCharArray());
+        //解析jwt.jks文件，拿到公钥信息
+        KeyStoreKeyFactory keyStoreKeyFactory = new KeyStoreKeyFactory(
+                new ClassPathResource(jwtCAProperties.getKeyPairName()),
+                jwtCAProperties.getKeyPairSecret().toCharArray());
+        return keyStoreKeyFactory.getKeyPair(jwtCAProperties.getKeyPairAlias(),
+                jwtCAProperties.getKeyPairStoreSecret().toCharArray());
     }
 
 

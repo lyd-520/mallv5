@@ -8,11 +8,11 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Import;
 
-@SpringBootApplication(exclude = DruidDataSourceAutoConfigure.class)
+@SpringBootApplication
 @EnableFeignClients
 @EnableDiscoveryClient
 @Import(RedisExtConifg.class)
-public class TulingmallPromotionApplication {
+public class  TulingmallPromotionApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TulingmallPromotionApplication.class, args);

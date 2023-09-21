@@ -1,5 +1,6 @@
 package com.tuling.tulingmall.service.impl;
 
+import cn.hutool.core.util.ReUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.common.constant.RedisKeyPrefixConst;
@@ -38,7 +39,7 @@ public class SecKillConfirmOrderServiceImpl implements SecKillConfirmOrderServic
     @Autowired
     private RedisClusterUtil redisOpsUtil;
     @Autowired
-    private RedisSingleUtil redisStockUtil;
+    private RedisClusterUtil redisStockUtil;
     @Autowired
     private LocalCache<Boolean> cache;
     @Autowired
@@ -204,7 +205,7 @@ public class SecKillConfirmOrderServiceImpl implements SecKillConfirmOrderServic
         //3、从redis缓存当中取出当前要购买的商品库存
         Integer stock = redisStockUtil.get(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId,Integer.class);
 
-        if(stock == null || stock <= 0){
+        if(stock ==null || stock <= 0){
             /*设置标记，如果售罄了在本地cache中设置为true*/
             cache.setLocalCache(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + productId,true);
             return CommonResult.failed("商品已经售罄,请购买其它商品!");

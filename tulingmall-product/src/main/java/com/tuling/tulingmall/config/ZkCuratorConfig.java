@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * @slogan: 天下风云出我辈，一入代码岁月催
  * @description: zookeeper配置 抛弃不用了
  **/
-//@Configuration
+@Configuration
 public class ZkCuratorConfig {
     @Value("${zk.curator.retryCount}")
     private int retryCount;

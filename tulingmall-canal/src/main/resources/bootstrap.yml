@@ -3,6 +3,9 @@ spring:
     name: tulingmall-canal
   cloud:
     nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        register-enabled: true
       config:
         server-addr: 127.0.0.1:8848 #配置中心的地址
         file-extension: yml #配置文件结尾的配置
@@ -18,7 +21,7 @@ spring:
           data-id: tulingmall-redis-key-dev.yml #在多个服务之间共享redis的key
           group: DEFAULT_GROUP
           refresh: true
-      discovery:
-        server-addr: 127.0.0.1:8848
+      username: nacos
+      password: nacos
   profiles:
     active: dev

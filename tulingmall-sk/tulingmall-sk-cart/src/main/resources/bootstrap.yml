@@ -16,8 +16,8 @@ spring:
           data-id: tulingmall-db-common.yml
           group: DEFAULT_GROUP
           refresh: true
-      discovery:
-        server-addr: 127.0.0.1:8848
+      username: nacos
+      password: nacos
   profiles:
     active: dev
 

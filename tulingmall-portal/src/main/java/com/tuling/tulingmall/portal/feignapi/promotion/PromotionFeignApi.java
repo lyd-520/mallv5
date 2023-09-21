@@ -14,12 +14,18 @@ import java.util.List;
 /**
 * @desc: 类的描述:远程调用获取首页显示内容，包括推荐和秒杀等
 */
-@FeignClient(name = "tulingmall-promotion",path = "/recommend")
+@FeignClient(name = "tulingmall-promotion")
 public interface PromotionFeignApi {
 
     /*推荐内容类型:0->全部；1->品牌；2->新品推荐；3->人气推荐;4->轮播广告*/
-    @RequestMapping(value = "/content", method = RequestMethod.GET)
+    @RequestMapping(value = "/recommend/content", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<HomeContentResult> content(@RequestParam(value = "getType") int getType);
+    @RequestMapping(value = "/seckill/getHomeSecKillProductList", method = RequestMethod.GET)
+    @ResponseBody
+    CommonResult<List<List<FlashPromotionProduct>>> getHomeSecKillProductList(
+            @RequestParam(value = "secKillId") long secKillId,
+            @RequestParam(value = "status") int status);
+
 
 }

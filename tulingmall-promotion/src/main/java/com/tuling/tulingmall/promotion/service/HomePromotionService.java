@@ -13,7 +13,8 @@ public interface HomePromotionService {
 
     /* 获取首页推荐品牌和产品*/
     HomeContentResult content(int getType);
-
+    //获得全部秒杀商品
+    List<List<FlashPromotionProduct>> secKillContent(int status);
     /*秒杀产品*/
     List<FlashPromotionProduct> secKillContent(long secKillId,int status);
 

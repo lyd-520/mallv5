@@ -1,3 +1,5 @@
+use leaf;
+
 DROP TABLE IF EXISTS `leaf_alloc`;
 
 CREATE TABLE `leaf_alloc` (

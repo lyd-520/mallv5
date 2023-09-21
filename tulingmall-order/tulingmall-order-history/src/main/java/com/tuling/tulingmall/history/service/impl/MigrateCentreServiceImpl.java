@@ -73,7 +73,7 @@ public class MigrateCentreServiceImpl implements MigrateCentreService {
             calendar.add(Calendar.DATE, -1);
             Date maxDate = calendar.getTime();
             String factTableName = OrderConstant.OMS_ORDER_NAME_PREFIX + tableNo;
-            /*本轮处理数据的最小ID和最大ID*/
+            /*本轮处理数据的最小ID和上一次成功的最大ID*/
             long roundMinOrderId =  operateMgDbService.getMaxOrderId(factTableName);
             long roundMaxOrderId =  roundMinOrderId;
             log.info("本轮表[{}]数据迁移查询记录起始ID = {}",factTableName,roundMinOrderId);

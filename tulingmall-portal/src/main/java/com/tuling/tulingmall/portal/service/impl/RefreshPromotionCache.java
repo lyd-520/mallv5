@@ -35,11 +35,11 @@ public class RefreshPromotionCache {
 
     @Autowired
     @Qualifier("secKill")
-    private Cache<String, List<FlashPromotionProduct>> secKillCache;
+    private Cache<String, List<List<FlashPromotionProduct>>> secKillCache;
 
     @Autowired
     @Qualifier("secKillBak")
-    private Cache<String, List<FlashPromotionProduct>> secKillCacheBak;
+    private Cache<String, List<List<FlashPromotionProduct>>> secKillCacheBak;
 
     @Autowired
     private PromotionRedisKey promotionRedisKey;
@@ -70,11 +70,12 @@ public class RefreshPromotionCache {
     }
 
     @Async
-    @Scheduled(initialDelay=30,fixedDelay = 30)
+//    @Scheduled(initialDelay=30,fixedDelay = 30)
+    @Scheduled(initialDelay=10*100,fixedDelay = 30*100)
     public void refreshSecKillCache(){
         final String secKillKey = promotionRedisKey.getSecKillKey();
         if(null == secKillCache.getIfPresent(secKillKey)||null == secKillCacheBak.getIfPresent(secKillKey)){
-            List<FlashPromotionProduct> secKills = homeService.getSecKillFromRemote();
+            List<List<FlashPromotionProduct>> secKills = homeService.getSecKillFromRemote();
             if(null != secKills){
                 if(null == secKillCache.getIfPresent(secKillKey)) {
                     secKillCache.put(secKillKey,secKills);

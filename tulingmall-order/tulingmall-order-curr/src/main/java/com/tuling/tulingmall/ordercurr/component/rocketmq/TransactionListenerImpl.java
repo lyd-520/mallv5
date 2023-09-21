@@ -96,7 +96,7 @@ public class TransactionListenerImpl implements RocketMQLocalTransactionListener
                 if(retryTimes >= maxTryMums){
                     OmsOrder order = new OmsOrder();
                     order.setId(Long.parseLong(orderId));
-                    order.setStatus(5); //订单状态修改为关闭
+                    order.setStatus(5); //订单状态修改为无效，订单会查次数超过10
 //                order.setPayType(0); //支付状态修改为未支付
                     order.setPaymentTime(new Date());
                     orderMapper.updateByPrimaryKeySelective(order);
@@ -108,7 +108,9 @@ public class TransactionListenerImpl implements RocketMQLocalTransactionListener
                     //2.1 如果支付宝支付成功，这个方法中会更新订单paytype和status,并完成扣减库存
                     CommonResult commonResult = tradeService.tradeStatusQuery(Long.parseLong(orderId), 1);
                     if(ResultCode.SUCCESS.getCode() == commonResult.getCode()){
-                        msg.getHeaders().remove("CHECK_TIME");
+                        //成功支付，删除回查次数记录
+                        redisTemplate.opsForHash().delete(OrderConstant.REDIS_CREATE_ORDER,orderId);
+//                        msg.getHeaders().remove("CHECK_TIME");
 //                    localTrans.remove(transId);
                         log.info("--- 订单下单事务消息 transID: "+transId+";订单号："+orderId+"已经完成支付，回滚消息");
                         return RocketMQLocalTransactionState.ROLLBACK;

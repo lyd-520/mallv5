@@ -9,7 +9,8 @@
     </resultMap>-->
     <resultMap id="flashPromotionParam" type="com.tuling.tulingmall.promotion.domain.FlashPromotionParam"
                extends="com.tuling.tulingmall.promotion.mapper.SmsFlashPromotionMapper.BaseResultMap">
-        <collection property="relation" columnPrefix="r_" resultMap="com.tuling.tulingmall.promotion.mapper.SmsFlashPromotionProductRelationMapper.BaseResultMap">
+        <collection property="relation" columnPrefix="r_" ofType="com.tuling.tulingmall.promotion.model.SmsFlashPromotionProductRelation"
+                    resultMap="com.tuling.tulingmall.promotion.mapper.SmsFlashPromotionProductRelationMapper.BaseResultMap">
         </collection>
     </resultMap>
 <!--    <select id="getFlashProductList" resultMap="flashPromotionProduct">

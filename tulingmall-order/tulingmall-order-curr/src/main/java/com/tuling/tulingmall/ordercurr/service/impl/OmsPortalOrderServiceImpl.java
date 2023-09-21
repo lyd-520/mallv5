@@ -18,7 +18,12 @@ import com.tuling.tulingmall.ordercurr.mapper.OmsOrderMapper;
 import com.tuling.tulingmall.ordercurr.mapper.OmsOrderSettingMapper;
 import com.tuling.tulingmall.ordercurr.model.*;
 import com.tuling.tulingmall.ordercurr.service.OmsPortalOrderService;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
+import org.apache.shardingsphere.transaction.core.TransactionType;
+import org.apache.skywalking.apm.toolkit.trace.Tag;
+import org.apache.skywalking.apm.toolkit.trace.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -147,8 +152,11 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
      * @return
      */
     @Override
-    //@GlobalTransactional(name = "generateOrder",rollbackFor = Exception.class)
-    @Transactional
+    @GlobalTransactional(name = "generateOrder",rollbackFor = Exception.class)
+    //SeataATShardingTransactionManager
+//    @ShardingTransactionType(TransactionType.BASE)
+    @Trace
+    @Tag(key = "generateOrder",value = "生成订单，锁定库存，调用会员服务，删除购物车item")
     public CommonResult generateOrder(OrderParam orderParam, Long memberId) {
         log.debug("接受参数OrderParam：{} memberId：{}",orderParam,memberId);
         if(null == orderParam || null == memberId){
@@ -270,11 +278,12 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         order.setGrowth(0);
         order.setOrderSn(orderSn);
         //插入order表和order_item表
+        //捕获DuplicateKeyException或SqlIntegrityConstraintViolationException返回用户下单成功的响应
         omsOrderMapper.insert(order);
         orderItemDao.insertList(orderItemList);
 
         //TODO 分布式事务 删除购物车中的下单商品
-//        deleteCartItemList(cartPromotionItemList, memberId);
+        deleteCartItemList(cartPromotionItemList, memberId);
         Map<String, Object> result = new HashMap<>();
         result.put("order", order);
         result.put("orderItemList", orderItemList);
@@ -408,7 +417,8 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         for (CartPromotionItem cartPromotionItem : cartPromotionItemList) {
             ids.add(cartPromotionItem.getId());
         }
-        //TODO cartItemService.delete(memberId, ids);
+        cartFeignApi.deleteCartPromotionItem(ids,memberId);
+
     }
 
 //    /**

@@ -140,9 +140,9 @@
     WHERE p.id=#{id};
   </select>
   <select id="selectSubjectProductRelationByProductId" resultMap="CmsSubjectProductRelationResultMap">
-    select * from tl_mall_normal.cms_subject_product_relation where product_id=#{productId}
+    select * from dbase.cms_subject_product_relation where product_id=#{productId}
   </select>
   <select id="selectPrefrenceAreaProductRelationByProductId" resultMap="CmsPrefrenceAreaProductRelationResultMap">
-    select * from tl_mall_normal.cms_prefrence_area_product_relation where product_id=#{productId}
+    select * from dbase.cms_prefrence_area_product_relation where product_id=#{productId}
   </select>
 </mapper>

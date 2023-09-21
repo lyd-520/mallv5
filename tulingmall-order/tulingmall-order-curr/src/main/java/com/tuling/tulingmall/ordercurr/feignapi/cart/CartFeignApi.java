@@ -1,6 +1,8 @@
 package com.tuling.tulingmall.ordercurr.feignapi.cart;
 
+import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.ordercurr.domain.CartPromotionItem;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,9 @@ public interface CartFeignApi {
 //    public List<CartPromotionItem> listSelectedPromotion(List<Long> itemIds,Long memberId);
 
     @RequestMapping(value = "/list/selectedpromotion", method = RequestMethod.POST)
-    public List<CartPromotionItem> listSelectedPromotion(@RequestBody List<Long> itemIds);
+     List<CartPromotionItem> listSelectedPromotion(@RequestBody List<Long> itemIds);
 
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseBody
+    CommonResult deleteCartPromotionItem(@RequestParam("ids")List<Long> ids, @RequestHeader("memberId")Long memberId);
 }

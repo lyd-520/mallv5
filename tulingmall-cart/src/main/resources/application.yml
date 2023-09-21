@@ -5,8 +5,8 @@ spring:
     dynamic:
       primary: cart
   redis:
-    cluster:
-      nodes: 218.76.8.107:8001,218.76.8.107:8002,218.76.8.107:8003
+#    cluster:
+#      nodes: 218.76.8.107:8001,218.76.8.107:8002,218.76.8.107:8003
     lettuce:
       pool:
         max-active: 8 # 连接池最大连接数（使用负值表示没有限制）
@@ -24,7 +24,7 @@ zk:
  curator:
    retryCount: 5 #重试次数
    elapsedTimeMs: 5000 #
-   connectUrl: tlshop.com:2181 #zk地址
+   connectUrl: localhost:2181 #zk地址
    sessionTimeOutMs: 60000 #会话超时时间
    connectionTimeOutMs: 5000 #连接超时时间
 
@@ -39,6 +39,8 @@ rocketmq:
     transTopic: order-cart #订单-购物车主题
     asyncOrderTopic: async-order #异步订单topic
     asyncOrderGroup: async-order-group #异步下单消息消费
+  name-server: 127.0.0.1:9876
+
 
 feign:
   client:

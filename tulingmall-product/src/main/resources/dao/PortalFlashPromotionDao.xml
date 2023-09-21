@@ -73,8 +73,8 @@
             pr.flash_promotion_limit,
             p.*
         FROM
-            tl_mall_promotion.sms_flash_promotion_product_relation pr
-            LEFT JOIN tl_mall_goods.pms_product p ON pr.product_id = p.id
+            dbase.sms_flash_promotion_product_relation pr
+            LEFT JOIN dbase.pms_product p ON pr.product_id = p.id
         WHERE
             pr.flash_promotion_id = #{flashPromotionId}
             AND pr.flash_promotion_session_id = #{sessionId}
@@ -91,8 +91,8 @@
         sfp.flash_promotion_limit r_flash_promotion_limit,
         sfp.sort r_sort
         FROM
-        tl_mall_promotion.sms_flash_promotion sp
-        LEFT JOIN tl_mall_promotion.sms_flash_promotion_product_relation sfp ON sfp.flash_promotion_id=sp.id
+        dbase.sms_flash_promotion sp
+        LEFT JOIN dbase.sms_flash_promotion_product_relation sfp ON sfp.flash_promotion_id=sp.id
         WHERE NOW()>=sp.start_date AND sp.end_date>NOW() and status=1
         <if test="pid != null">
             AND sfp.product_id=#{pid}
@@ -107,8 +107,8 @@
         pr.flash_promotion_limit,
         p.*
         FROM
-        tl_mall_promotion.sms_flash_promotion_product_relation pr
-        LEFT JOIN tl_mall_goods.pms_product p ON pr.product_id = p.id
+        dbase.sms_flash_promotion_product_relation pr
+        LEFT JOIN dbase.pms_product p ON pr.product_id = p.id
         WHERE
         pr.id IN
         <foreach collection="promotionIds" item="listItem" open="(" close=")" separator=",">

@@ -97,7 +97,9 @@ public class OmsOrderServiceImpl implements OmsOrderService {
 
     @Override
     public OmsOrderDetail detail(Long id) {
-        return orderMapper.getDetail(id);
+        OmsOrderDetail detail = orderMapper.getDetail(id);
+//        System.out.println(detail);
+        return detail;
     }
 
     @Override

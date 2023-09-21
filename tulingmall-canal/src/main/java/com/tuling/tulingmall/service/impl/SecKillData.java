@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -161,8 +163,12 @@ public class SecKillData implements IProcessCanalData {
 
     /* PO 本方法可以用pipeline优化*/
     private void secKillOnRedis(long secKillId){
+        //二维数组展开
         List<FlashPromotionProduct> result =
-                promotionFeignApi.getHomeSecKillProductList(secKillId,STATUS_ON).getData();
+                promotionFeignApi.getHomeSecKillProductList(secKillId,STATUS_ON).getData()
+                        .stream().filter(item ->item!=null)
+                        .flatMap(List::stream)
+                        .collect(Collectors.toCollection(ArrayList::new));
         if(CollectionUtils.isEmpty(result)){
             log.warn("开启了秒杀，但是没有找到秒杀对应产品，请检查！");
             return;
@@ -190,7 +196,7 @@ public class SecKillData implements IProcessCanalData {
     }
 
     /* PO 本方法可以用pipeline优化*/
-    private void secKillOffRedis(List<FlashPromotionProduct> products){
+    private void secKillOffRedis(List<List<FlashPromotionProduct>> products){
         if(CollectionUtils.isEmpty(products)){
             log.warn("关闭秒杀，但是没有找到秒杀对应产品，请检查！");
             return;
@@ -198,10 +204,12 @@ public class SecKillData implements IProcessCanalData {
         final String secKillKey = promotionRedisKey.getSecKillKey();
         homeRedisOpsExtUtil.delete(secKillKey);
         /*秒杀服务需要*/
-        for(FlashPromotionProduct product : products){
-            secKillStockUtil.delete(RedisKeyPrefixConst.SECKILL_PRODUCT_PREFIX + product.getFlashPromotionId()
-                    + ":" + product.getId());
-            secKillStockUtil.delete(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + product.getId());
+        for(List<FlashPromotionProduct> productsBySeckillId : products) {
+                for (FlashPromotionProduct product : productsBySeckillId) {
+                    secKillStockUtil.delete(RedisKeyPrefixConst.SECKILL_PRODUCT_PREFIX + product.getFlashPromotionId()
+                            + ":" + product.getId());
+                    secKillStockUtil.delete(RedisKeyPrefixConst.MIAOSHA_STOCK_CACHE_PREFIX + product.getId());
+                }
         }
     }
 }

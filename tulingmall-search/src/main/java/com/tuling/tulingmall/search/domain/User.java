@@ -9,7 +9,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 /**
  * @author 白起老师
  */
-@Document(indexName = "es_test_index", type = "_doc",shards = 1,replicas = 1)
+@Document(indexName = "es_test_index",shards = 1,replicas = 1)
 public class User implements Serializable {
     @Field(type = FieldType.Keyword)
     private String name;

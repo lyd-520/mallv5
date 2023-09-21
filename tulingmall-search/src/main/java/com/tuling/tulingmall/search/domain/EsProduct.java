@@ -13,7 +13,8 @@ import java.util.List;
  * 搜索中的商品信息
  * Created on 2018/6/19.
  */
-@Document(indexName = "pms", type = "product",shards = 1,replicas = 0)
+//type = "product"
+@Document(indexName = "pms", shards = 1,replicas = 0)
 public class EsProduct implements Serializable {
     private static final long serialVersionUID = -1L;
     @Id

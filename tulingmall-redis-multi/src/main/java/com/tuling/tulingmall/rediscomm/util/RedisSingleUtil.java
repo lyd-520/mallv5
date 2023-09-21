@@ -17,7 +17,8 @@ import java.util.concurrent.TimeUnit;
 public class RedisSingleUtil {
 
     @Autowired
-    @Qualifier("redisSingleTemplate")
+//    @Qualifier("redisSingleTemplate")
+    @Qualifier("redisClusterTemplate")
     private RedisTemplate redisTemplate;
 
     @PostConstruct

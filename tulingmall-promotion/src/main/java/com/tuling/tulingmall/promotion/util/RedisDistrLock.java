@@ -19,9 +19,9 @@ public class RedisDistrLock {
             "if result == ARGV[1] then redis.call('del', KEYS[1]) " +
             "return 1 else return nil end";
 
-    /* 当前线程的锁集合，处理锁的可重入*/
+    /* 当前线程的锁集合，处理锁的可重入,value为重入次数*/
     private ThreadLocal<Map<String, Integer>> lockers = new ThreadLocal<>();
-    /* 当前线程锁的key和value集合*/
+    /* 当前线程锁的key和value-uuid集合,保证释放的是自己的锁*/
     private ThreadLocal<Map<String, String>> values = new ThreadLocal<>();
 
     @Autowired

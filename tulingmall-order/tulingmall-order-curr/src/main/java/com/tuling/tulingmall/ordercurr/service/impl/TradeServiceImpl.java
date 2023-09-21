@@ -4,6 +4,8 @@ import com.alipay.api.AlipayResponse;
 import com.alipay.api.domain.TradeFundBill;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
+import com.mysql.cj.protocol.x.XServerCapabilities;
+import com.mysql.cj.protocol.x.XServerSession;
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.ordercurr.component.TradePayProp;
 import com.tuling.tulingmall.ordercurr.component.trade.alipay.config.Configs;
@@ -25,9 +27,11 @@ import com.tuling.tulingmall.ordercurr.mapper.OmsOrderMapper;
 import com.tuling.tulingmall.ordercurr.model.OmsOrder;
 import com.tuling.tulingmall.ordercurr.model.OmsOrderItem;
 import com.tuling.tulingmall.ordercurr.service.TradeService;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -62,7 +66,8 @@ public class TradeServiceImpl implements TradeService {
 
     // 支付宝当面付2.0服务
     private static AlipayTradeService tradeService;
-
+    @Value("${server.port}")
+    private String port;
     @Autowired
     private PortalOrderDao portalOrderDao;
 
@@ -106,6 +111,8 @@ public class TradeServiceImpl implements TradeService {
                 omsOrder.setId(detail.getId());
 //                omsOrder.setMemberId(memberId);
                 omsOrder.setQrcode(path);
+                if(omsOrder.getVersion()==null)
+                    omsOrder.setVersion(0);
                 //把二维码地址插入到订单记录中
                 orderMapper.updateByPrimaryKeySelective(omsOrder);
                 return CommonResult.success(path);
@@ -128,6 +135,7 @@ public class TradeServiceImpl implements TradeService {
      * @return
      */
     @Override
+    @GlobalTransactional
     public CommonResult tradeStatusQuery(Long orderId, Integer payType) {
         OmsOrderDetail orderDetail = portalOrderDao.getDetail(orderId);
         if(payType == 1){//支付宝支付
@@ -160,7 +168,7 @@ public class TradeServiceImpl implements TradeService {
         }else{//微信支付
 
         }
-        return CommonResult.failed();
+        return new CommonResult(500,"正在轮询订单状态，请及时支付订单或重试",null);
     }
 
     private CommonResult alipayTradeQuery(String orderSn){
@@ -233,14 +241,14 @@ public class TradeServiceImpl implements TradeService {
                 +"件共"+totalAmount+"元";
 
         // 商户操作员编号，添加此参数可以为商户操作员做销售统计
-        String operatorId = "yangguo";
+        String operatorId = "商户操作员编号-lyd";
 
         // (必填) 商户门店编号，通过门店号和商家后台可以配置精准到门店的折扣信息，详询支付宝技术支持
-        String storeId = "tuling";
+        String storeId = "商户门店编号-mallv5";
 
         // 业务扩展参数，目前可添加由支付宝分配的系统商编号(通过setSysServiceProviderId方法)，详情请咨询支付宝技术支持
         ExtendParams extendParams = new ExtendParams();
-        extendParams.setSysServiceProviderId("2088100200300400500");
+        extendParams.setSysServiceProviderId("2088721008296175");
 
         // 支付超时，定义为120分钟
         String timeoutExpress = "120m";

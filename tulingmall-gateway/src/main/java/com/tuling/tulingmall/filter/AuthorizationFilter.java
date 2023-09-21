@@ -101,14 +101,13 @@ public class AuthorizationFilter implements GlobalFilter,Ordered,InitializingBea
         //log.info("jwt的用户信息:{}",loginUserInfo);
 
         String memberId = claims.get("additionalInfo",Map.class).get("memberId").toString();
-
-        String nickName = claims.get("additionalInfo",Map.class).get("nickName").toString();
-
+        Object nickName = claims.get("additionalInfo",Map.class).get("nickName");
+        if(nickName==null)  nickName=memberId;
         //向headers中放文件，记得build
         ServerHttpRequest request = serverWebExchange.getRequest().mutate()
                 .header("username",claims.get("user_name",String.class))
                 .header("memberId",memberId)
-                .header("nickName",nickName)
+                .header("nickName", (String) nickName)
                 .build();
 
         //将现在的request 变成 change对象

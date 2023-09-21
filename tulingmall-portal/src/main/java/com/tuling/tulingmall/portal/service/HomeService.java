@@ -23,7 +23,7 @@ public interface HomeService {
 
     HomeContentResult getFromRemote();
 
-    List<FlashPromotionProduct> getSecKillFromRemote();
+    List<List<FlashPromotionProduct>> getSecKillFromRemote();
 
     void preheatCache();
 

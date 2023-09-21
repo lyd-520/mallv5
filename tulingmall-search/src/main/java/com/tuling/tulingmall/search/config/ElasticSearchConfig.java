@@ -27,9 +27,9 @@ public class ElasticSearchConfig {
 //                        new HttpHost("192.168.21.132", 9200, "http")));
 
         RestClientBuilder builder=RestClient.builder(
-                new HttpHost("192.168.65.110", 9200, "http"),
-                new HttpHost("192.168.65.113", 9200, "http"),
-                new HttpHost("192.168.65.219", 9200, "http"));
+//                new HttpHost("192.168.65.110", 9200, "http"),
+//                new HttpHost("192.168.65.113", 9200, "http"),
+                new HttpHost("127.0.0.1", 9200, "http"));
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "123456"));
         builder.setHttpClientConfigCallback(f -> f.setDefaultCredentialsProvider(credentialsProvider));

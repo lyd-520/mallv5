@@ -14,6 +14,8 @@ spring:
           data-id: tulingmall-db-common.yml
           group: DEFAULT_GROUP
           refresh: true
+      username: nacos
+      password: nacos
   profiles:
     active: dev
 

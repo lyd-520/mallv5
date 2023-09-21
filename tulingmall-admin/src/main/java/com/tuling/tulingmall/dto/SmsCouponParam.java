@@ -11,6 +11,7 @@ import java.util.List;
  * Created on 2018/8/28.
  */
 public class SmsCouponParam extends SmsCoupon {
+
     //优惠券绑定的商品
     private List<SmsCouponProductRelation> productRelationList;
     //优惠券绑定的商品分类

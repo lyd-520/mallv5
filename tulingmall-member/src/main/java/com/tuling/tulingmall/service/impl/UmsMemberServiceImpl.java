@@ -2,6 +2,7 @@ package com.tuling.tulingmall.service.impl;
 
 import com.tuling.tulingmall.common.api.CommonResult;
 import com.tuling.tulingmall.common.api.TokenInfo;
+import com.tuling.tulingmall.domain.MemberDetails;
 import com.tuling.tulingmall.mapper.UmsMemberLevelMapper;
 import com.tuling.tulingmall.mapper.UmsMemberMapper;
 import com.tuling.tulingmall.model.UmsMember;
@@ -18,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -26,6 +30,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -86,8 +91,8 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         }
         //查询是否已有该用户
         UmsMemberExample example = new UmsMemberExample();
-        example.createCriteria().andUsernameEqualTo(username);
-        example.or(example.createCriteria().andPhoneEqualTo(telephone));
+        example.createCriteria().andUsernameEqualTo(username).andPasswordEqualTo(password);
+//        example.or(example.createCriteria().andPhoneEqualTo(telephone));
         List<UmsMember> umsMembers = memberMapper.selectByExample(example);
         if (!CollectionUtils.isEmpty(umsMembers)) {
             return CommonResult.failed("该用户已经存在");
@@ -112,13 +117,14 @@ public class UmsMemberServiceImpl implements UmsMemberService {
     }
 
     @Override
-    public CommonResult generateAuthCode(String telephone) {
+    public CommonResult generateAuthCode(String telephone , HttpServletRequest request) {
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
         for(int i=0;i<6;i++){
             sb.append(random.nextInt(10));
         }
         //验证码绑定手机号并存储到redis
+        //request.getSession().setAttribute("happy-captcha", sb);
         redisService.set(REDIS_KEY_PREFIX_AUTH_CODE+telephone,sb.toString());
         redisService.expire(REDIS_KEY_PREFIX_AUTH_CODE+telephone,AUTH_CODE_EXPIRE_SECONDS);
         return CommonResult.success(sb.toString(),"获取验证码成功");
@@ -142,18 +148,18 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         return CommonResult.success(null,"密码修改成功");
     }
 
-    @Override
-    public UmsMember getCurrentMember() {
-        return null;
-    }
+//    @Override
+//    public UmsMember getCurrentMember() {
+//        return null;
+//    }
 
-/*    @Override
+    @Override
     public UmsMember getCurrentMember() {
         SecurityContext ctx = SecurityContextHolder.getContext();
         Authentication auth = ctx.getAuthentication();
         MemberDetails memberDetails = (MemberDetails) auth.getPrincipal();
         return memberDetails.getUmsMember();
-    }*/
+    }
 
     @Override
     public void updateIntegration(Long id, Integer integration) {

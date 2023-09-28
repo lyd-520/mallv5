@@ -1,5 +1,6 @@
 package com.tuling.tulingmall.service.impl;
 
+
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.protocol.CanalEntry;
@@ -7,6 +8,7 @@ import com.alibaba.otter.canal.protocol.Message;
 import com.tuling.tulingmall.domain.ProductESVo;
 import com.tuling.tulingmall.service.IProcessCanalData;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -161,16 +163,16 @@ public class ProductESData implements IProcessCanalData {
                 productESVo.setKeywords(colValue);
             } if(colName.equals(T_SUB_TITLE)) {
                 productESVo.setSubTitle(colValue);
-            } if(colName.equals(T_PRICE)) {
+            } if(colName.equals(T_PRICE)&& StringUtils.isNotBlank(colValue)) {
                 productESVo.setPrice(new BigDecimal(colValue));
-            } if(colName.equals(T_PROMOTION_PRICE)) {
+            } if(colName.equals(T_PROMOTION_PRICE)&&StringUtils.isNotBlank(colValue)) {
                 productESVo.setPromotionPrice(new BigDecimal(colValue));
-            } if(colName.equals(T_ORIGINAL_PRICE)) {
+            } if(colName.equals(T_ORIGINAL_PRICE)&&StringUtils.isNotBlank(colValue)) {
                 productESVo.setOriginalPrice(new BigDecimal(colValue));
             } if(colName.equals(T_PIC)) {
                 productESVo.setPic(colValue);
-            } if(colName.equals(T_SALE)) {
-                productESVo.setSaleCount(Integer.valueOf(colValue));
+            } if(colName.equals(T_SALE)&& StringUtils.isNotBlank(colValue)) {
+                productESVo.setSaleCount(Integer.parseInt(colValue));
             } if(colName.equals(T_BRAND_ID)) {
                 productESVo.setBrandId(Long.valueOf(colValue));
             } if(colName.equals(T_BRAND_NAME)) {
@@ -209,7 +211,7 @@ public class ProductESData implements IProcessCanalData {
         }
         xContentBuilder.endObject();*/
         UpdateRequest request =
-                new UpdateRequest(indexName, docId).doc(productJson,XContentType.JSON);
+                new UpdateRequest(indexName, docId).doc(productJson, XContentType.JSON);
         request.docAsUpsert(true);
         UpdateResponse updateResponse =
                 restHighLevelClient.update(request, RequestOptions.DEFAULT);

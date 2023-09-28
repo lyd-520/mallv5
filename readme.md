@@ -26,8 +26,17 @@ tulingmall-order-curr、tulingmall-portal、tulingmall-gateway
 ### doc目录说明
 htmljss 秒杀静态网页、JS文件、CSS文件等
 nginx 秒杀nginx配置、Lua脚本、第三方Lua库
-### 本地运行
-商城在本地运行需要本地存在MySQL、Nacos、Canal等基础服务
-秒杀系统牵涉较复杂，暂不提供本地完整运行版本
+### 前台地址
+http://mallv5.v2.idcfengye.com/mallv5-front/
+注意下单支付的二维码需要沙箱环境的支付宝才能扫描
+### 后台地址
+http://mallv5.v2.idcfengye.com/mallv5-admin/
+用户名：admin 密码：admin
 ### 系统整体架构图
 ![mallv5架构图.jpg](..%2F..%2F..%2Fmicrosoft_Edge%2Fmallv5%E6%9E%B6%E6%9E%84%E5%9B%BE.jpg)
+### 基础设施层介绍
+https://www.processon.com/mindmap/6511b14eb67650768b6fb521
+### 微服务组件介绍
+https://www.processon.com/mindmap/6511b18b85561b13415b62e3
+### 前端效果展示说明
+https://www.processon.com/mindmap/651511b467c1a752f0bf9175

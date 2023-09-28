@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.mapper.SmsHomeBrandMapper;
 import com.tuling.tulingmall.model.SmsHomeBrand;
-import com.tuling.tulingmall.service.SmsHomeBrandService;
+import com.tuling.tulingmall.service.sms.SmsHomeBrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

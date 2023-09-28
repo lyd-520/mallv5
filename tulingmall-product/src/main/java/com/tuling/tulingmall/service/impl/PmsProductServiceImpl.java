@@ -176,6 +176,7 @@ public class PmsProductServiceImpl implements PmsProductService {
             return productInfo;
         }
         RLock lock = redission.getLock(lockPath + id);
+//        int waitCnt = 0;
         try {
             if (lock.tryLock(0, 3, TimeUnit.SECONDS)) {
                 productInfo = portalProductDao.getProductInfo(id);
@@ -185,10 +186,13 @@ public class PmsProductServiceImpl implements PmsProductService {
                 }
                 checkFlash(id, productInfo);
                 redisOpsUtil.set(RedisKeyPrefixConst.PRODUCT_DETAIL_CACHE + id, productInfo, 360, TimeUnit.SECONDS);
-            } else {
+            }
+            else {
                  productInfo = redisOpsUtil.get(RedisKeyPrefixConst.PRODUCT_DETAIL_CACHE + id, PmsProductParam.class);
-               /* Thread.sleep(10);
-                getProductInfoDisLock(id);*/
+               /*
+               if(productInfo==null){
+                 Thread.sleep(10);
+                 getProductInfoDisLock(id)};*/
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

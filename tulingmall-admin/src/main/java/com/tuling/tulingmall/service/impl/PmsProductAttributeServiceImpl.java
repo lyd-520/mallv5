@@ -10,7 +10,7 @@ import com.tuling.tulingmall.mapper.PmsProductAttributeCategoryMapper;
 import com.tuling.tulingmall.mapper.PmsProductAttributeMapper;
 import com.tuling.tulingmall.model.PmsProductAttribute;
 import com.tuling.tulingmall.model.PmsProductAttributeCategory;
-import com.tuling.tulingmall.service.PmsProductAttributeService;
+import com.tuling.tulingmall.service.pms.PmsProductAttributeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.mapper.SmsFlashPromotionMapper;
 import com.tuling.tulingmall.model.SmsFlashPromotion;
-import com.tuling.tulingmall.service.SmsFlashPromotionService;
+import com.tuling.tulingmall.service.sms.SmsFlashPromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.mapper.OmsOrderReturnReasonMapper;
 import com.tuling.tulingmall.model.OmsOrderReturnReason;
-import com.tuling.tulingmall.service.OmsOrderReturnReasonService;
+import com.tuling.tulingmall.service.oms.OmsOrderReturnReasonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

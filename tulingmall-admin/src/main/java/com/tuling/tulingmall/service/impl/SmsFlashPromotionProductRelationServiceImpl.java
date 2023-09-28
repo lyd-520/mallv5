@@ -5,7 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.dto.SmsFlashPromotionProduct;
 import com.tuling.tulingmall.mapper.SmsFlashPromotionProductRelationMapper;
 import com.tuling.tulingmall.model.SmsFlashPromotionProductRelation;
-import com.tuling.tulingmall.service.SmsFlashPromotionProductRelationService;
+import com.tuling.tulingmall.service.sms.SmsFlashPromotionProductRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

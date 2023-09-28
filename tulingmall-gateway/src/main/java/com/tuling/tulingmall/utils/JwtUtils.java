@@ -51,10 +51,8 @@ public class JwtUtils {
 
     /**
      * 方法实现说明: 通过远程调用获取认证服务器颁发jwt的解析的key
-     * @author:smlz
      * @param restTemplate 远程调用的操作类
      * @return: tokenKey 解析jwt的tokenKey
-     * @exception:
      * @date:2020/1/22 11:31
      */
     private static String getTokenKeyByRemoteCall(RestTemplate restTemplate) throws GateWayException {
@@ -86,11 +84,8 @@ public class JwtUtils {
 
     /**
      * 方法实现说明:生成公钥
-     * @author:smlz
      * @param restTemplate:远程调用操作类
      * @return: PublicKey 公钥对象
-     * @exception:
-     * @date:2020/1/22 11:52
      */
     public static PublicKey genPulicKey(RestTemplate restTemplate) throws GateWayException {
 

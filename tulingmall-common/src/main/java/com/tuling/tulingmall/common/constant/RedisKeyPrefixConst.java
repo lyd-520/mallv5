@@ -28,7 +28,7 @@ public interface RedisKeyPrefixConst {
 
     /**
      * 秒杀异步下单排队中
-     * 0->排队中,-1->秒杀失败,>0 ->秒杀成功,对应的是订单编号
+     * 1->排队中,-1->秒杀失败,>0 ->秒杀成功,对应的是订单编号
      */
     String MIAOSHA_ASYNC_WAITING_PREFIX = "miaosha:async:waiting:";
 

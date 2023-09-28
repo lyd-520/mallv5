@@ -31,6 +31,12 @@ public class OrderMessageSender {
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
 
+    /**发送创建订单消息*/
+    public boolean sendCreateOrderMsg(OrderMessage message){
+        SendResult result = rocketMQTemplate.syncSend(asyncOrderTopic,message);
+        return SendStatus.SEND_OK == result.getSendStatus();
+    }
+
     /**
      * 发送延时订单
      * messageDelayLevel=1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
@@ -43,12 +49,6 @@ public class OrderMessageSender {
                 .setHeader(RocketMQHeaders.KEYS, cancelId)
                 .build();
         SendResult result = rocketMQTemplate.syncSend(scheduleTopic,message,5000,15);
-        return SendStatus.SEND_OK == result.getSendStatus();
-    }
-
-    /**发送创建订单消息*/
-    public boolean sendCreateOrderMsg(OrderMessage message){
-        SendResult result = rocketMQTemplate.syncSend(asyncOrderTopic,message);
         return SendStatus.SEND_OK == result.getSendStatus();
     }
 

@@ -2,7 +2,7 @@ package com.tuling.tulingmall.service.impl;
 
 import com.tuling.tulingmall.mapper.OmsCompanyAddressMapper;
 import com.tuling.tulingmall.model.OmsCompanyAddress;
-import com.tuling.tulingmall.service.OmsCompanyAddressService;
+import com.tuling.tulingmall.service.oms.OmsCompanyAddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

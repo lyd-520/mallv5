@@ -195,7 +195,7 @@ public class SecKillConfirmOrderServiceImpl implements SecKillConfirmOrderServic
         }
 
         /*
-         *2、 校验是否有权限购买token TODO 楼兰
+         *2、 校验是否有权限购买token TODO
          */
       /*  String redisToken = redisOpsUtil.get(RedisKeyPrefixConst.MIAOSHA_TOKEN_PREFIX + memberId + ":" + productId);
         if(StringUtils.isEmpty(redisToken) || !redisToken.equals(token)){

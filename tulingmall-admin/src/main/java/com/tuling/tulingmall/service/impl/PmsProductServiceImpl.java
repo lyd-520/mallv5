@@ -9,7 +9,7 @@ import com.tuling.tulingmall.dto.PmsProductQueryParam;
 import com.tuling.tulingmall.dto.PmsProductResult;
 import com.tuling.tulingmall.mapper.*;
 import com.tuling.tulingmall.model.*;
-import com.tuling.tulingmall.service.PmsProductService;
+import com.tuling.tulingmall.service.pms.PmsProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -12,7 +12,7 @@ import com.tuling.tulingmall.mapper.SmsCouponProductRelationMapper;
 import com.tuling.tulingmall.model.SmsCoupon;
 import com.tuling.tulingmall.model.SmsCouponProductCategoryRelation;
 import com.tuling.tulingmall.model.SmsCouponProductRelation;
-import com.tuling.tulingmall.service.SmsCouponService;
+import com.tuling.tulingmall.service.sms.SmsCouponService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

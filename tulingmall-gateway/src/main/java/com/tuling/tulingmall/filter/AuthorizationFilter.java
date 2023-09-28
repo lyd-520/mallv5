@@ -28,7 +28,6 @@ import java.util.Map;
 
 /**
  * 认证过滤器,根据url判断用户请求是要经过认证 才能访问
- * Created by smlz on 2019/12/17.
  */
 @Component
 @Slf4j
@@ -87,12 +86,9 @@ public class AuthorizationFilter implements GlobalFilter,Ordered,InitializingBea
 
     /**
      * 方法实现说明:把我们从jwt解析出来的用户信息存储到请求中
-     * @author:smlz
      * @param serverWebExchange
      * @param claims
      * @return: ServerWebExchange
-     * @exception:
-     * @date:2020/1/22 12:12
      */
     private ServerWebExchange wrapHeader(ServerWebExchange serverWebExchange,Claims claims) {
 

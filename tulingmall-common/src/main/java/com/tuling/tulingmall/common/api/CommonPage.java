@@ -43,6 +43,16 @@ public class CommonPage<T> {
         return result;
     }
 
+    public static<T> CommonPage<T> restPage(com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> pageInfo) {
+        CommonPage<T> result = new CommonPage<T>();
+        result.setTotalPage((int) pageInfo.getPages());
+        result.setPageNum((int) pageInfo.getCurrent());
+        result.setPageSize((int) pageInfo.getSize());
+        result.setTotal(pageInfo.getTotal());
+        result.setList(pageInfo.getRecords());
+        return result;
+    }
+
     public Integer getPageNum() {
         return pageNum;
     }

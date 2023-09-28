@@ -28,11 +28,6 @@ public class TulingUserDetailService implements UserDetailsService {
 
     /**
      * 方法实现说明:用户登陆
-     * @author:smlz
-     * @param userName 用户名密码
-     * @return: UserDetails
-     * @exception:
-     * @date:2020/1/21 21:30
      */
 
     @Autowired

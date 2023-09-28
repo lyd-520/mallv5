@@ -25,30 +25,30 @@
 
     <!-- 彩色日志格式 -->
     <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
-
-<!--    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
-<!--        <destination>127.0.0.1:5644</destination>-->
-<!--        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">-->
-<!--            <providers>-->
-<!--                <timestamp>-->
-<!--                    <timeZone>UTC</timeZone>-->
-<!--                </timestamp>-->
-<!--                <pattern>-->
-<!--                    <pattern>-->
-<!--                        {-->
-<!--                        "level": "%level",-->
-<!--                        "tid": "%tid",-->
-<!--                        "skyWalkingContext": "%sw_ctx",-->
-<!--                        "thread": "%thread",-->
-<!--                        "class": "%logger{1.}:%L",-->
-<!--                        "message": "%message",-->
-<!--                        "stackTrace": "%exception{10}"-->
-<!--                        }-->
-<!--                    </pattern>-->
-<!--                </pattern>-->
-<!--            </providers>-->
-<!--        </encoder>-->
-<!--    </appender>-->
+<!--     将上报给skywalking的traceId等信息推送到logstash-->
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>127.0.0.1:5644</destination>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <pattern>
+                    <pattern>
+                        {
+                        "level": "%level",
+                        "tid": "%tid",
+                        "skyWalkingContext": "%sw_ctx",
+                        "thread": "%thread",
+                        "class": "%logger{1.}:%L",
+                        "message": "%message",
+                        "stackTrace": "%exception{10}"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
 
 
     <!--输出到控制台-->
@@ -86,6 +86,31 @@
 
     <!--输出到文件-->
 
+    <!-- 时间滚动输出 level为 ERROR 日志 -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 正在记录的日志文件的路径及文件名 -->
+        <file>${log.path}/log_error.log</file>
+        <!--日志文件输出格式-->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <charset>UTF-8</charset> <!-- 此处设置字符集 -->
+        </encoder>
+        <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/error/log-error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!--日志文件保留天数-->
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+        <!-- 此日志文件只记录ERROR级别的 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
     <!-- 时间滚动输出 level为 DEBUG 日志 -->
     <appender name="DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 正在记录的日志文件的路径及文件名 -->
@@ -167,31 +192,6 @@
     </appender>
 
 
-    <!-- 时间滚动输出 level为 ERROR 日志 -->
-    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 正在记录的日志文件的路径及文件名 -->
-        <file>${log.path}/log_error.log</file>
-        <!--日志文件输出格式-->
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
-            <charset>UTF-8</charset> <!-- 此处设置字符集 -->
-        </encoder>
-        <!-- 日志记录器的滚动策略，按日期，按大小记录 -->
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/error/log-error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>100MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <!--日志文件保留天数-->
-            <maxHistory>15</maxHistory>
-        </rollingPolicy>
-        <!-- 此日志文件只记录ERROR级别的 -->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>ERROR</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-    </appender>
 
     <!--
         <logger>用来设置某一个包或者具体的某一个类的日志打印级别、
@@ -226,6 +226,7 @@
 -->
     <root level="info">
         <appender-ref ref="ASYNC"/>
+        <appender-ref ref="INFO_FILE" />
 <!--        <appender-ref ref="LOGSTASH"/>-->
         <appender-ref ref="grpc-log" />
         <appender-ref ref="CONSOLE" />

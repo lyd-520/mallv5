@@ -1,103 +1,177 @@
 package com.tuling.tulingmall.security.config;
 
-import com.tuling.tulingmall.security.component.JwtAuthenticationTokenFilter;
-import com.tuling.tulingmall.security.component.RestAuthenticationEntryPoint;
+import com.tuling.tulingmall.security.component.JwtAuthenticationFilter;
 import com.tuling.tulingmall.security.component.RestfulAccessDeniedHandler;
+import com.tuling.tulingmall.security.component.RestfulAuthenticationEntryPoint;
+import com.tuling.tulingmall.security.component.SecurityResourceRoleSource;
+import com.tuling.tulingmall.security.component.dynamicSecurity.DynamicAccessDecisionManager;
+import com.tuling.tulingmall.security.component.dynamicSecurity.DynamicSecurityFilter;
+import com.tuling.tulingmall.security.component.dynamicSecurity.DynamicSecurityMetadataSource;
+import com.tuling.tulingmall.security.config.IgnoredUrlsConfig;
 import com.tuling.tulingmall.security.util.JwtTokenUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.List;
+import java.util.Map;
 
-/**
- * 对SpringSecurity的配置的扩展，支持自定义白名单资源路径和查询用户逻辑
- * Created by macro on 2019/11/5.
+
+/***
+
  */
+@Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    /**
+     * 由于前台服务没有动态权限功能，所以要配置required = false
+     */
+    @Autowired(required = false)
+    SecurityResourceRoleSource securityResourceRoleSource;
+
+    @Autowired(required = false)
+    @Lazy
+    private DynamicSecurityMetadataSource dynamicSecurityService;
+
+    /**
+     * 权限配置   白名单...jwt认证
+     * @param http
+     * @throws Exception
+     */
     @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
-        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = httpSecurity
-                .authorizeRequests();
-        for (String url : ignoreUrlsConfig().getUrls()) {
+    protected void configure(HttpSecurity http) throws Exception {
+        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.authorizeRequests();
+
+        // 循环白名单进行放行
+        for (String url : ignoredUrlsConfig().getUrls()) {
             registry.antMatchers(url).permitAll();
         }
-        //允许跨域请求的OPTIONS请求
+
+        /* 静态资源权限*/
+        if(securityResourceRoleSource!=null) {
+            Map<String, List<String>> resourceRole = securityResourceRoleSource.getResourceRole();
+
+            //循环注册registry.antMatchers("/product").hasAnyAuthority("xxx管理员")
+            for (String resource : resourceRole.keySet()) {
+
+                // 将List转换数组， 将object[] 转换string[]
+                List<String> roles = resourceRole.get(resource);
+                registry.antMatchers(resource).hasAnyAuthority(roles.toArray(new String[roles.size()]));
+            }
+        }
+
+        // 允许可以请求OPTIONS CORS
         registry.antMatchers(HttpMethod.OPTIONS).permitAll();
-        //任何请求需要身份认证
-        registry.and()
-                .authorizeRequests()
+
+        // 其他任何请求都需要身份认证
+        registry
+                // 任何请求
                 .anyRequest()
+                // 都需要认证
                 .authenticated()
-                // 关闭跨站请求防护及不使用session
+                // 关闭csrf跨站请求伪造 :因为现在使用jwt来实现认证
+                .and()
+                // 支持跨域
+                .cors()
                 .and()
                 .csrf()
                 .disable()
+                // 禁止session
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 // 自定义权限拒绝处理类
                 .and()
                 .exceptionHandling()
+                // 没有权限访问时的处理类
                 .accessDeniedHandler(restfulAccessDeniedHandler())
-                .authenticationEntryPoint(restAuthenticationEntryPoint())
-                // 自定义权限拦截器JWT过滤器
+                // 没有登录时的处理类
+                .authenticationEntryPoint(restfulAuthenticationEntryPoint())
                 .and()
-                .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-    }
+                // 加入jwt认证过滤器
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService())
-                .passwordEncoder(passwordEncoder());
+        //有动态权限配置时添加动态权限校验过滤器
+        if(dynamicSecurityService!=null){
+            registry.and().addFilterBefore(dynamicSecurityFilter(), FilterSecurityInterceptor.class);
+        }
+    }
+    /**
+     * jwt工具类
+     * @return
+     */
+    @Bean
+    public JwtTokenUtil jwtTokenUtil(){
+        return new JwtTokenUtil();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public JwtAuthenticationFilter jwtAuthenticationFilter(){
+        return new JwtAuthenticationFilter();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter() {
-        return new JwtAuthenticationTokenFilter();
+    public IgnoredUrlsConfig ignoredUrlsConfig(){
+        return new IgnoredUrlsConfig();
     }
 
     @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Bean
-    public RestfulAccessDeniedHandler restfulAccessDeniedHandler() {
+    public RestfulAccessDeniedHandler restfulAccessDeniedHandler(){
         return new RestfulAccessDeniedHandler();
     }
 
-    @Bean
-    public RestAuthenticationEntryPoint restAuthenticationEntryPoint() {
-        return new RestAuthenticationEntryPoint();
-    }
 
     @Bean
-    public IgnoreUrlsConfig ignoreUrlsConfig() {
-        return new IgnoreUrlsConfig();
+    public RestfulAuthenticationEntryPoint restfulAuthenticationEntryPoint(){
+        return new RestfulAuthenticationEntryPoint();
     }
 
+    /**
+     * 作用：根据当前请求url获取对应角色
+     * @return
+     */
+    @ConditionalOnBean(name = "dynamicSecurityService")
     @Bean
-    public JwtTokenUtil jwtTokenUtil() {
-        return new JwtTokenUtil();
+    public DynamicAccessDecisionManager dynamicAccessDecisionManager() {
+        return new DynamicAccessDecisionManager();
     }
 
-    public static void main(String[] args) {
-        //密码加密方式
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        System.out.println(bCryptPasswordEncoder.encode("test"));
+    /**
+     * 作用：在FilterSecurityInterceptor前面的自定义过滤器
+     * @return
+     */
+    @ConditionalOnBean(name = "dynamicSecurityService")
+    @Bean
+    public DynamicSecurityFilter dynamicSecurityFilter() {
+        return new DynamicSecurityFilter();
     }
+
+    /**
+     * 作用：鉴权
+     * @return
+     */
+//    @ConditionalOnBean(name = "dynamicSecurityService")
+//    @Bean
+//    public DynamicSecurityMetadataSource dynamicSecurityMetadataSource() {
+//        return new DynamicSecurityMetadataSource();
+//    }
+
+
 }

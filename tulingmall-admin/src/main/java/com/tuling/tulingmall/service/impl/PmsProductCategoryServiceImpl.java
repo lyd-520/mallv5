@@ -12,7 +12,7 @@ import com.tuling.tulingmall.mapper.PmsProductMapper;
 import com.tuling.tulingmall.model.PmsProduct;
 import com.tuling.tulingmall.model.PmsProductCategory;
 import com.tuling.tulingmall.model.PmsProductCategoryAttributeRelation;
-import com.tuling.tulingmall.service.PmsProductCategoryService;
+import com.tuling.tulingmall.service.pms.PmsProductCategoryService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -41,7 +41,7 @@ public class PortalProductController {
     })
     @RequestMapping(value = "/productInfo/{id}", method = RequestMethod.GET)
     public CommonResult getProductInfo(@PathVariable Long id) {
-        PmsProductParam pmsProductParam=pmsProductService.  getProductInfo(id);
+        PmsProductParam pmsProductParam=pmsProductService.getProductInfo(id);
         return CommonResult.success(pmsProductParam);
     }
 

@@ -7,7 +7,7 @@ import com.tuling.tulingmall.mapper.OmsOrderMapper;
 import com.tuling.tulingmall.mapper.OmsOrderOperateHistoryMapper;
 import com.tuling.tulingmall.model.OmsOrder;
 import com.tuling.tulingmall.model.OmsOrderOperateHistory;
-import com.tuling.tulingmall.service.OmsOrderService;
+import com.tuling.tulingmall.service.oms.OmsOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

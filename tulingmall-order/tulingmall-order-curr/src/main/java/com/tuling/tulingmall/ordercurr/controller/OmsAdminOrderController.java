@@ -34,7 +34,7 @@ public class OmsAdminOrderController {
     @ApiOperation("查询订单")
     @RequestMapping(value = "/list", method = {RequestMethod.GET,RequestMethod.POST})
     @ResponseBody
-    public CommonResult<CommonPage<OmsOrder>> list(OmsOrderQueryParam queryParam,
+    public CommonResult<CommonPage<OmsOrder>> list(@RequestBody OmsOrderQueryParam queryParam,
                                                    @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
                                                    @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         List<OmsOrder> orderList = orderService.list(queryParam, pageSize, pageNum);

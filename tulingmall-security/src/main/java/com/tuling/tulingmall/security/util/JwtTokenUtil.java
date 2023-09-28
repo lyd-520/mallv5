@@ -8,7 +8,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -23,11 +22,11 @@ import java.util.Map;
  * {"sub":"wang","created":1489079981393,"exp":1489684781}
  * signature的生成算法：
  * HMACSHA512(base64UrlEncode(header) + "." +base64UrlEncode(payload),secret)
- * Created by macro on 2018/4/26.
+ * Created on 2018/4/26.
  */
 public class JwtTokenUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtil.class);
-    private static final String CLAIM_KEY_USERNAME = "sub";
+    private static final String CLAIM_KEY_USERNAME = "user_name";
     private static final String CLAIM_KEY_CREATED = "created";
     @Value("${jwt.secret}")
     private String secret;
@@ -71,13 +70,13 @@ public class JwtTokenUtil {
     }
 
     /**
-     * 从token中获取登录用户名
+     * 解密：从token中获取登录用户名（项目使用）
      */
     public String getUserNameFromToken(String token) {
         String username;
         try {
             Claims claims = getClaimsFromToken(token);
-            username = claims.getSubject();
+            username = claims.get(CLAIM_KEY_USERNAME,String.class);
         } catch (Exception e) {
             username = null;
         }
@@ -85,14 +84,13 @@ public class JwtTokenUtil {
     }
 
     /**
-     * 验证token是否还有效
-     *
-     * @param token       客户端传入的token
-     * @param userDetails 从数据库中查询出来的用户信息
+     * 加密： 根据用户名生成token（项目使用）
      */
-    public boolean validateToken(String token, UserDetails userDetails) {
-        String username = getUserNameFromToken(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    public String generateUserNameStr(String username) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(CLAIM_KEY_USERNAME,username);
+        claims.put(CLAIM_KEY_CREATED, new Date());
+        return generateToken(claims);
     }
 
     /**
@@ -111,15 +109,7 @@ public class JwtTokenUtil {
         return claims.getExpiration();
     }
 
-    /**
-     * 根据用户信息生成token
-     */
-    public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
-        claims.put(CLAIM_KEY_CREATED, new Date());
-        return generateToken(claims);
-    }
+
 
     /**
      * 当原来的token没过期时是可以刷新的

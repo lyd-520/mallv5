@@ -30,7 +30,7 @@ public class RocksDBUtil {
             log.info("osName:{}", osName);
             String rocksDBPath; //RocksDB文件目录
             if (osName.toLowerCase().contains("windows")) {
-                rocksDBPath = "C:\\RocksDB"; // 指定windows系统下RocksDB文件目录
+                rocksDBPath = "D:\\IdeaData\\git\\tlmall-v5-single\\TuLing\\RocksDB"; // 指定windows系统下RocksDB文件目录
             } else {
                 rocksDBPath = "/usr/local/rocksdb"; // 指定linux系统下RocksDB文件目录
             }

@@ -2,7 +2,7 @@ package com.tuling.tulingmall.service.impl;
 
 import com.tuling.tulingmall.mapper.CmsPrefrenceAreaMapper;
 import com.tuling.tulingmall.model.CmsPrefrenceArea;
-import com.tuling.tulingmall.service.CmsPrefrenceAreaService;
+import com.tuling.tulingmall.service.cms.CmsPrefrenceAreaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

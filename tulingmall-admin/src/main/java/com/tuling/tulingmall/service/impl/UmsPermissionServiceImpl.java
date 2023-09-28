@@ -3,7 +3,7 @@ package com.tuling.tulingmall.service.impl;
 import com.tuling.tulingmall.dto.UmsPermissionNode;
 import com.tuling.tulingmall.mapper.UmsPermissionMapper;
 import com.tuling.tulingmall.model.UmsPermission;
-import com.tuling.tulingmall.service.UmsPermissionService;
+import com.tuling.tulingmall.service.ums.UmsPermissionService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

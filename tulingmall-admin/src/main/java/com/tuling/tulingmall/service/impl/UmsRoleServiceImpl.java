@@ -1,12 +1,19 @@
 package com.tuling.tulingmall.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.tuling.tulingmall.mapper.UmsMenuMapper;
+import com.tuling.tulingmall.mapper.UmsResourceMapper;
 import com.tuling.tulingmall.mapper.UmsRoleMapper;
-import com.tuling.tulingmall.mapper.UmsRolePermissionRelationMapper;
-import com.tuling.tulingmall.model.UmsPermission;
-import com.tuling.tulingmall.model.UmsRole;
-import com.tuling.tulingmall.model.UmsRolePermissionRelation;
-import com.tuling.tulingmall.service.UmsRoleService;
+import com.tuling.tulingmall.model.*;
+import com.tuling.tulingmall.service.ums.UmsAdminCacheService;
+import com.tuling.tulingmall.service.ums.UmsRoleMenuRelationService;
+import com.tuling.tulingmall.service.ums.UmsRoleResourceRelationService;
+import com.tuling.tulingmall.service.ums.UmsRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,58 +23,97 @@ import java.util.List;
 
 /**
  * 后台角色管理Service实现类
- * Created on 2018/9/30.
+ *2022/9/30.
  */
 @Service
-public class UmsRoleServiceImpl implements UmsRoleService {
+public class UmsRoleServiceImpl extends ServiceImpl<UmsRoleMapper, UmsRole> implements UmsRoleService {
     @Autowired
-    private UmsRoleMapper roleMapper;
+    private UmsAdminCacheService adminCacheService;
     @Autowired
-    private UmsRolePermissionRelationMapper rolePermissionRelationMapper;
+    private UmsRoleMenuRelationService roleMenuRelationService;
+    @Autowired
+    private UmsRoleResourceRelationService roleResourceRelationService;
+    @Autowired
+    private UmsMenuMapper menuMapper;
+    @Autowired
+    private UmsResourceMapper resourceMapper;
     @Override
-    public int create(UmsRole role) {
+    public boolean create(UmsRole role) {
         role.setCreateTime(new Date());
-        role.setStatus(1);
         role.setAdminCount(0);
         role.setSort(0);
-        return roleMapper.insert(role);
+        return save(role);
     }
 
     @Override
-    public int update(Long id, UmsRole role) {
-        role.setId(id);
-        return roleMapper.updateById(role);
+    public boolean delete(List<Long> ids) {
+        boolean success = removeByIds(ids);
+        adminCacheService.delResourceListByRoleIds(ids);
+        return success;
     }
 
     @Override
-    public int delete(List<Long> ids) {
-        return roleMapper.deleteBatchIds(ids);
+    public Page<UmsRole> list(String keyword, Integer pageSize, Integer pageNum) {
+        Page<UmsRole> page = new Page<>(pageNum,pageSize);
+        QueryWrapper<UmsRole> wrapper = new QueryWrapper<>();
+        LambdaQueryWrapper<UmsRole> lambda = wrapper.lambda();
+        if(StrUtil.isNotEmpty(keyword)){
+            lambda.like(UmsRole::getName,keyword);
+        }
+        return page(page,wrapper);
     }
 
     @Override
-    public List<UmsPermission> getPermissionList(Long roleId) {
-        return rolePermissionRelationMapper.getPermissionList(roleId);
+    public List<UmsMenu> getMenuList(Long adminId) {
+        return menuMapper.getMenuList(adminId);
     }
 
     @Override
-    public int updatePermission(Long roleId, List<Long> permissionIds) {
+    public List<UmsMenu> listMenu(Long roleId) {
+        return menuMapper.getMenuListByRoleId(roleId);
+    }
+
+    @Override
+    public List<UmsResource> listResource(Long roleId) {
+        return resourceMapper.getResourceListByRoleId(roleId);
+    }
+
+    @Override
+    public int allocMenu(Long roleId, List<Long> menuIds) {
         //先删除原有关系
-        UpdateWrapper<UmsRolePermissionRelation> wrapper = new UpdateWrapper<>();
-        wrapper.eq("role_id",roleId);
-        rolePermissionRelationMapper.delete(wrapper);
+        QueryWrapper<UmsRoleMenuRelation> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(UmsRoleMenuRelation::getRoleId,roleId);
+        roleMenuRelationService.remove(wrapper);
         //批量插入新关系
-        List<UmsRolePermissionRelation> relationList = new ArrayList<>();
-        for (Long permissionId : permissionIds) {
-            UmsRolePermissionRelation relation = new UmsRolePermissionRelation();
+        List<UmsRoleMenuRelation> relationList = new ArrayList<>();
+        for (Long menuId : menuIds) {
+            UmsRoleMenuRelation relation = new UmsRoleMenuRelation();
             relation.setRoleId(roleId);
-            relation.setPermissionId(permissionId);
+            relation.setMenuId(menuId);
             relationList.add(relation);
         }
-        return rolePermissionRelationMapper.insertRolePermission(relationList);
+        roleMenuRelationService.saveBatch(relationList);
+        return menuIds.size();
     }
 
     @Override
-    public List<UmsRole> list() {
-        return roleMapper.selectList(null);
+    public int allocResource(Long roleId, List<Long> resourceIds) {
+        //先删除原有关系
+        QueryWrapper<UmsRoleResourceRelation> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(UmsRoleResourceRelation::getRoleId,roleId);
+        roleResourceRelationService.remove(wrapper);
+        //批量插入新关系
+        List<UmsRoleResourceRelation> relationList = new ArrayList<>();
+        for (Long resourceId : resourceIds) {
+            UmsRoleResourceRelation relation = new UmsRoleResourceRelation();
+            relation.setRoleId(roleId);
+            relation.setResourceId(resourceId);
+            relationList.add(relation);
+        }
+        roleResourceRelationService.saveBatch(relationList);
+        adminCacheService.delResourceListByRole(roleId);
+        return resourceIds.size();
     }
+
+
 }

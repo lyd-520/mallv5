@@ -1,51 +1,36 @@
 package com.tuling.tulingmall.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.io.Serializable;
 
+/**
+ * <p>
+ * 后台用户和角色关系表
+ * </p>
+ *
+ * @author macro
+ *2020-08-21
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@TableName("ums_admin_role_relation")
+@ApiModel(value="UmsAdminRoleRelation对象", description="后台用户和角色关系表")
 public class UmsAdminRoleRelation implements Serializable {
+
+    private static final long serialVersionUID=1L;
+
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     private Long adminId;
 
     private Long roleId;
 
-    private static final long serialVersionUID = 1L;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getAdminId() {
-        return adminId;
-    }
-
-    public void setAdminId(Long adminId) {
-        this.adminId = adminId;
-    }
-
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", adminId=").append(adminId);
-        sb.append(", roleId=").append(roleId);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
-    }
 }

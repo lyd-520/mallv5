@@ -7,7 +7,6 @@ import com.tuling.tulingmall.dto.OmsReturnApplyQueryParam;
 import com.tuling.tulingmall.dto.OmsUpdateStatusParam;
 import com.tuling.tulingmall.mapper.OmsOrderReturnApplyMapper;
 import com.tuling.tulingmall.model.OmsOrderReturnApply;
-import com.tuling.tulingmall.service.OmsOrderReturnApplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

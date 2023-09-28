@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.dto.PmsProductAttributeCategoryItem;
 import com.tuling.tulingmall.mapper.PmsProductAttributeCategoryMapper;
 import com.tuling.tulingmall.model.PmsProductAttributeCategory;
-import com.tuling.tulingmall.service.PmsProductAttributeCategoryService;
+import com.tuling.tulingmall.service.pms.PmsProductAttributeCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

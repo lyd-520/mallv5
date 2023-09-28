@@ -54,16 +54,11 @@ public class TulingAuthServerConfig extends AuthorizationServerConfigurerAdapter
 
     /**
      * 方法实现说明:我们颁发的token通过jwt存储
-     * @author:smlz
-     * @return:
-     * @exception:
-     * @date:2020/1/21 21:49
      */
     @Bean
     public TokenStore tokenStore(){
         return new JwtTokenStore(jwtAccessTokenConverter());
     }
-
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
@@ -91,12 +86,7 @@ public class TulingAuthServerConfig extends AuthorizationServerConfigurerAdapter
 
 
     /**
-     * 方法实现说明:认证服务器能够给哪些 客户端颁发token  我们需要把客户端的配置 存储到
-     * 数据库中 可以基于内存存储和db存储
-     * @author:smlz
-     * @return:
-     * @exception:
-     * @date:2020/1/15 20:18
+     * 方法实现说明:认证服务器能够给哪些客户端颁发token,我们需要把客户端的配置存储到数据库
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -105,22 +95,13 @@ public class TulingAuthServerConfig extends AuthorizationServerConfigurerAdapter
 
     /**
      * 方法实现说明:用于查找我们第三方客户端的组件 主要用于查找 数据库表 oauth_client_details
-     * @author:smlz
-     * @return:
-     * @exception:
-     * @date:2020/1/15 20:19
      */
     @Bean
     public ClientDetailsService clientDetails() {
         return new JdbcClientDetailsService(dataSource);
     }
-
     /**
      * 方法实现说明:授权服务器的配置的配置
-     * @author:smlz
-     * @return:
-     * @exception:
-     * @date:2020/1/15 20:21
      */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
@@ -133,14 +114,8 @@ public class TulingAuthServerConfig extends AuthorizationServerConfigurerAdapter
                 .userDetailsService(tulingUserDetailService) //用户来获取token的时候需要 进行账号密码
                 .authenticationManager(authenticationManager);
     }
-
-
     /**
      * 方法实现说明:授权服务器安全配置
-     * @author:smlz
-     * @return:
-     * @exception:
-     * @date:2020/1/15 20:23
      */
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {

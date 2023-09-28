@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class SecKillData implements IProcessCanalData {
 
     private final static String SECKILL_STATUS = "status";
-    private final static String SECKILL_ID = "id";
+    private final static String SECKILL_ID = "flash_promotion_id";
     private final static int ON_SECKILL_STATUS = 1;
     private final static int OFF_SECKILL_STATUS = 0;
 
@@ -90,7 +90,8 @@ public class SecKillData implements IProcessCanalData {
                 int size = message.getEntries().size();
                 if (batchId == -1 || size == 0) {
                     log.info("本次[{}]没有检测到秒杀数据更新。",batchId);
-                }else{
+                }
+                else{
                     log.info("本次[{}]秒杀数据本次共有[{}]次更新需要处理",batchId,size);
                     for(CanalEntry.Entry entry : message.getEntries()){
                         if (entry.getEntryType() == CanalEntry.EntryType.TRANSACTIONBEGIN
@@ -107,8 +108,9 @@ public class SecKillData implements IProcessCanalData {
                         }
                         for (CanalEntry.RowData rowData : rowChange.getRowDatasList()) {
                             List<CanalEntry.Column> columns = rowData.getAfterColumnsList();
+//                            System.out.println("================="+columns);
                             long secKillId = -1L;
-                            int secKillStatus = -1;
+                            int secKillStatus = 1;
                             if (eventType == CanalEntry.EventType.DELETE) {/*秒杀活动被删除*/
                                 for (CanalEntry.Column column : columns) {
                                     if(column.getName().equals(SECKILL_ID)) {
@@ -117,7 +119,8 @@ public class SecKillData implements IProcessCanalData {
                                     }
                                 }
                                 secKillOffRedis(promotionFeignApi.getHomeSecKillProductList(secKillId,STATUS_OFF).getData());
-                            } else if (eventType == CanalEntry.EventType.INSERT) { /*新增秒杀活动*/
+                            }
+                            else if (eventType == CanalEntry.EventType.INSERT) { /*新增秒杀活动*/
                                 for (CanalEntry.Column column : columns) {
                                     if(column.getName().equals(SECKILL_STATUS)) {
                                         secKillStatus = Integer.valueOf(column.getValue());
@@ -130,7 +133,8 @@ public class SecKillData implements IProcessCanalData {
                                 if(ON_SECKILL_STATUS == secKillStatus){
                                     secKillOnRedis(secKillId);
                                 }
-                            } else {/*秒杀活动变更*/
+                            }
+                            else {/*秒杀活动变更*/
                                 for (CanalEntry.Column column : columns) {
                                     if(column.getName().equals(SECKILL_STATUS)) {
                                         secKillStatus = Integer.valueOf(column.getValue());
@@ -164,8 +168,8 @@ public class SecKillData implements IProcessCanalData {
     /* PO 本方法可以用pipeline优化*/
     private void secKillOnRedis(long secKillId){
         //二维数组展开
-        List<FlashPromotionProduct> result =
-                promotionFeignApi.getHomeSecKillProductList(secKillId,STATUS_ON).getData()
+        List<List<FlashPromotionProduct>> feignResp = promotionFeignApi.getHomeSecKillProductList(secKillId,STATUS_ON).getData();
+        List<FlashPromotionProduct> result = feignResp
                         .stream().filter(item ->item!=null)
                         .flatMap(List::stream)
                         .collect(Collectors.toCollection(ArrayList::new));
@@ -178,7 +182,7 @@ public class SecKillData implements IProcessCanalData {
         long homeShowDuration = result.get(0).getFlashPromotionEndDate().getTime() - System.currentTimeMillis();
         if(homeShowDuration > 0){
             /*首页显示需要*/
-            homeRedisOpsExtUtil.putListAllRight(homeSecKillKey,result);
+            homeRedisOpsExtUtil.putListAllRight(homeSecKillKey,feignResp);
             homeRedisOpsExtUtil.expire(homeSecKillKey,homeShowDuration, TimeUnit.MILLISECONDS);
         }
         /*秒杀服务需要*/

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.tuling.tulingmall.mapper.SmsCouponHistoryMapper;
 import com.tuling.tulingmall.model.SmsCouponHistory;
-import com.tuling.tulingmall.service.SmsCouponHistoryService;
+import com.tuling.tulingmall.service.sms.SmsCouponHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

@@ -78,25 +78,27 @@ public class HomePromotionServiceImpl implements HomePromotionService {
         return result;
     }
     public List<List<FlashPromotionProduct>> secKillContent(int status){
-        final String secKillKey = promotionRedisKey.getSecKillKey();
-        List<List<FlashPromotionProduct>> result= redisOpsExtUtil.getListAll(secKillKey,List.class);
-        if(CollectionUtils.isEmpty(result)) {
+//        final String secKillKey = promotionRedisKey.getSecKillKey();
+        List<List<FlashPromotionProduct>> result= new ArrayList<>();
+//                redisOpsExtUtil.getListAll(secKillKey,List.class);
+//        if(CollectionUtils.isEmpty(result)) {
             List<Long> fullIds = flashPromotionProductDao.getAllPromotionIds(status);
             fullIds.forEach(id -> {
                 List<FlashPromotionProduct> content = secKillContent(id, status);
                 if (content!=null) result.add(content);
             });
-            redisOpsExtUtil.putListAllRight(secKillKey,result);
-        }
+//            redisOpsExtUtil.putListAllRight(secKillKey,result);
+//        }
         return result;
     }
     /*获取秒杀内容*/
     @Override
     public List<FlashPromotionProduct> secKillContent(long secKillId,int status) {
         //再次从redis获取seckill信息
-        final String secKillKey = promotionRedisKey.getSecKillKey()+"_"+secKillId;
-        List<FlashPromotionProduct> flashPromotionProducts= redisOpsExtUtil.getListAll(secKillKey,FlashPromotionProduct.class);
-        if(CollectionUtils.isEmpty(flashPromotionProducts)){
+//        final String secKillKey = promotionRedisKey.getSecKillKey()+"_"+secKillId;
+        List<FlashPromotionProduct> flashPromotionProducts= new ArrayList<>();
+//        redisOpsExtUtil.getListAll(secKillKey,FlashPromotionProduct.class);
+//        if(CollectionUtils.isEmpty(flashPromotionProducts)){
             //从数据库获取基本信息
            PageHelper.startPage(1, 8);
            Long secKillIdL = -1 == secKillId ? null : secKillId;
@@ -137,8 +139,8 @@ public class HomePromotionServiceImpl implements HomePromotionService {
               flashPromotionProducts.add(flashPromotionProduct);
               loop++;
            }
-           redisOpsExtUtil.putListAllRight(secKillKey,flashPromotionProducts);
-        }
+//           redisOpsExtUtil.putListAllRight(secKillKey,flashPromotionProducts);
+//        }
         return flashPromotionProducts;
     }
 
@@ -158,15 +160,17 @@ public class HomePromotionServiceImpl implements HomePromotionService {
         List<PmsBrand> recommendBrandList = redisOpsExtUtil.getListAll(brandKey, PmsBrand.class);
         if(CollectionUtils.isEmpty(recommendBrandList)){
             redisDistrLock.lock(promotionRedisKey.getDlBrandKey(),promotionRedisKey.getDlTimeout());
-            try {
-                PageHelper.startPage(0,ConstantPromotion.HOME_RECOMMEND_PAGESIZE,"sort desc");
-                SmsHomeBrandExample example = new SmsHomeBrandExample();
-                example.or().andRecommendStatusEqualTo(ConstantPromotion.HOME_PRODUCT_RECOMMEND_YES);
-                List<Long> smsHomeBrandIds = smsHomeBrandMapper.selectBrandIdByExample(example);
+            try { //再次尝试从redis获取
+                recommendBrandList = redisOpsExtUtil.getListAll(brandKey, PmsBrand.class);
+                if(CollectionUtils.isEmpty(recommendBrandList)){
+                  PageHelper.startPage(0,ConstantPromotion.HOME_RECOMMEND_PAGESIZE,"sort desc");
+                  SmsHomeBrandExample example = new SmsHomeBrandExample();
+                  example.or().andRecommendStatusEqualTo(ConstantPromotion.HOME_PRODUCT_RECOMMEND_YES);
+                  List<Long> smsHomeBrandIds = smsHomeBrandMapper.selectBrandIdByExample(example);
 //                pmsProductFeignApi.getHomeSecKillProductList();
 //                log.info("---------------------------");
-                recommendBrandList = pmsProductClientApi.getRecommandBrandList(smsHomeBrandIds);
-                redisOpsExtUtil.putListAllRight(brandKey,recommendBrandList);
+                  recommendBrandList = pmsProductClientApi.getRecommandBrandList(smsHomeBrandIds);
+                  redisOpsExtUtil.putListAllRight(brandKey,recommendBrandList);}
             } finally {
                 redisDistrLock.unlock(promotionRedisKey.getDlBrandKey());
             }

@@ -8,7 +8,7 @@ import com.tuling.tulingmall.mapper.PmsBrandMapper;
 import com.tuling.tulingmall.mapper.PmsProductMapper;
 import com.tuling.tulingmall.model.PmsBrand;
 import com.tuling.tulingmall.model.PmsProduct;
-import com.tuling.tulingmall.service.PmsBrandService;
+import com.tuling.tulingmall.service.pms.PmsBrandService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

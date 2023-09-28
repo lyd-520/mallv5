@@ -235,7 +235,6 @@ public class SecKillOrderServiceImpl implements SecKillOrderService {
     /* 供消息消费者扣减库存和保存订单的api，
     其实变为独立服务或者将消费者直接移到订单微服务更好
     todo 此处应该使用分布式事务，基于seata或者mq事务消息都可以*/
-    @Transactional
     public Long asyncCreateOrder(OmsOrder order,OmsOrderItem orderItem,Long flashPromotionRelationId) {
         //从数据库中扣减库存
         Integer result = promotionFeignApi.descStock(flashPromotionRelationId, 1);

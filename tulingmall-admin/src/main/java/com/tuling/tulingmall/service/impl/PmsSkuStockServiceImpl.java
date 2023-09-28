@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.tuling.tulingmall.dao.PmsSkuStockDao;
 import com.tuling.tulingmall.mapper.PmsSkuStockMapper;
 import com.tuling.tulingmall.model.PmsSkuStock;
-import com.tuling.tulingmall.service.PmsSkuStockService;
+import com.tuling.tulingmall.service.pms.PmsSkuStockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

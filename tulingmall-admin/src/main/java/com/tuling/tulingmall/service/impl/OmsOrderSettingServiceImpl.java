@@ -2,7 +2,7 @@ package com.tuling.tulingmall.service.impl;
 
 import com.tuling.tulingmall.mapper.OmsOrderSettingMapper;
 import com.tuling.tulingmall.model.OmsOrderSetting;
-import com.tuling.tulingmall.service.OmsOrderSettingService;
+import com.tuling.tulingmall.service.oms.OmsOrderSettingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

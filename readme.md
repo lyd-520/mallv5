@@ -4,7 +4,7 @@ tulingmall-authcenter 认证中心程序
 tulingmall-canal 数据同步程序  
 tulingmall-cart 购物车程序  
 tulingmall-common 通用模块，被其他程序以jar包形式使用 
-tulingmall-core 四期遗留模块，主要包含model的声明，被其他程序以jar包形式使用 
+tulingmall-core 主要包含model的声明，被其他程序以jar包形式使用 
 tulingmall-gateway 网关程序  
 tulingmall-member 用户管理程序  
 tulingmall-order-curr 订单程序  
@@ -29,3 +29,5 @@ nginx 秒杀nginx配置、Lua脚本、第三方Lua库
 ### 本地运行
 商城在本地运行需要本地存在MySQL、Nacos、Canal等基础服务
 秒杀系统牵涉较复杂，暂不提供本地完整运行版本
+### 系统整体架构图
+![mallv5架构图.jpg](..%2F..%2F..%2Fmicrosoft_Edge%2Fmallv5%E6%9E%B6%E6%9E%84%E5%9B%BE.jpg)

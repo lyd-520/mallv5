@@ -33,10 +33,10 @@ http://mallv5.v2.idcfengye.com/mallv5-front/
 http://mallv5.v2.idcfengye.com/mallv5-admin/
 用户名：admin 密码：admin
 ### 系统整体架构图
-![mallv5架构图.jpg](..%2F..%2F..%2Fmicrosoft_Edge%2Fmallv5%E6%9E%B6%E6%9E%84%E5%9B%BE.jpg)
+见项目路径下“mallv5架构图.jpg”
 ### 基础设施层介绍
-https://www.processon.com/mindmap/6511b14eb67650768b6fb521
+https://www.processon.com/view/link/6520c643744b16389e46ee25
 ### 微服务组件介绍
-https://www.processon.com/mindmap/6511b18b85561b13415b62e3
+https://www.processon.com/view/link/6520f7307bd61f001798ed9a
 ### 前端效果展示说明
-https://www.processon.com/mindmap/651511b467c1a752f0bf9175
+https://www.processon.com/view/link/6520f7b7ee3af44dd46f1096
